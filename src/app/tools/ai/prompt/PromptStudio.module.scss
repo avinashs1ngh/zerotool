@@ -1,0 +1,152 @@
+@import '@/styles/variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: var(--spacing-lg);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.titleArea {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+
+  .icon {
+    color: var(--accent-green);
+    filter: drop-shadow(0 0 8px rgba(0, 255, 102, 0.4));
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.activeCard {
+  border-color: var(--accent-green) !important;
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
+}
+
+.desc {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.cardActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+}
+
+.keysCard {
+  grid-column: 1 / -1;
+}
+
+.keyForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-width: 500px;
+}
+
+.saveBtn {
+  align-self: flex-start;
+  margin-top: var(--spacing-sm);
+}
+
+.studioLayout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.promptCard {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  
+  :global(.content) {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+}
+
+.textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 120px;
+  padding: var(--spacing-md);
+  outline: none;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.studioActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid var(--glass-border);
+}
+
+.providerBadge {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: var(--glass-bg);
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--glass-border);
+}
+
+.resultCard {
+  flex: 1;
+}
+
+.resultContent {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}

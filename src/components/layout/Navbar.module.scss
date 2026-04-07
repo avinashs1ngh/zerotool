@@ -1,0 +1,94 @@
+@import '../../styles/variables.scss';
+
+.navbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-lg);
+  @include glass-panel;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 10, 12, 0.7);
+
+  @media (max-width: 600px) {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.menuBtn {
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background var(--transition-speed);
+
+  &:hover {
+    background: var(--glass-highlight);
+  }
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+.searchHint {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 6px 12px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+
+  &:hover {
+    border-color: var(--text-muted);
+    background: var(--glass-highlight);
+  }
+
+  span {
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+
+  kbd {
+    font-size: 0.7rem;
+    background: var(--bg-tertiary);
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: var(--text-muted);
+    
+    @media (max-width: 600px) {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,45 @@
+@import '../../styles/variables.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.input {
+  @include glass-panel;
+  height: 40px;
+  padding: 0 var(--spacing-sm);
+  color: var(--text-primary);
+  outline: none;
+  font-size: 0.95rem;
+  transition: all var(--transition-speed);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    border-color: var(--text-secondary);
+    box-shadow: 0 0 0 1px var(--text-secondary);
+  }
+
+  &.hasError {
+    border-color: var(--accent-rose);
+    &:focus {
+      box-shadow: 0 0 0 1px var(--accent-rose);
+    }
+  }
+}
+
+.errorText {
+  font-size: 0.8rem;
+  color: var(--accent-rose);
+}

@@ -1,0 +1,94 @@
+@import '../../styles/variables.scss';
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+
+  // CMD K specific targeting
+  :global([cmdk-root]) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.searchWrap {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-md);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.searchIcon {
+  color: var(--text-secondary);
+  margin-right: var(--spacing-sm);
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: var(--spacing-md) 0;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  outline: none;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--spacing-sm);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+.empty {
+  padding: var(--spacing-xl);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+// Global styles for cmdk items
+:global([cmdk-group-heading]) {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+:global([cmdk-item]) {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &[data-selected='true'] {
+    background: var(--glass-highlight);
+    color: var(--accent-cyan);
+  }
+}

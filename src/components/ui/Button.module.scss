@@ -1,0 +1,83 @@
+@import '../../styles/variables.scss';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  transition: all var(--transition-speed);
+  padding: 0 var(--spacing-md);
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Variants
+.primary {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+  }
+}
+
+.secondary {
+  @include glass-panel;
+  color: var(--text-primary);
+  
+  &:hover:not(:disabled) {
+    background: var(--glass-highlight);
+  }
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  
+  &:hover:not(:disabled) {
+    color: var(--text-primary);
+    background: var(--glass-highlight);
+  }
+}
+
+.danger {
+  background: rgba(255, 42, 109, 0.2);
+  color: var(--accent-rose);
+  border: 1px solid rgba(255, 42, 109, 0.4);
+  
+  &:hover:not(:disabled) {
+    background: rgba(255, 42, 109, 0.4);
+  }
+}
+
+// Sizes
+.sm {
+  height: 32px;
+  font-size: 0.85rem;
+}
+
+.md {
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+.lg {
+  height: 48px;
+  font-size: 1.05rem;
+  padding: 0 var(--spacing-lg);
+}

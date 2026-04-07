@@ -1,0 +1,36 @@
+{
+  "name": "zerotool",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "preview": "next start -p 3001",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
+    "cmdk": "^1.1.1",
+    "framer-motion": "^12.38.0",
+    "idb": "^8.0.3",
+    "lucide-react": "^1.7.0",
+    "next": "16.2.2",
+    "next-pwa": "^5.6.0",
+    "pdf-lib": "^1.17.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "sass": "^1.99.0",
+    "zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@types/jszip": "^3.4.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.2",
+    "jszip": "^3.10.1",
+    "typescript": "^5"
+  }
+}

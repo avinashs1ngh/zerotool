@@ -1,0 +1,99 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { FileText, Plus, Scissors, Shrink, FileSearch, Image as ImageIcon, Layout } from 'lucide-react';
+import { Card } from '@/components/ui/Card';
+import { motion } from 'framer-motion';
+import styles from '../Category.module.scss';
+
+const PDF_TOOLS = [
+  {
+    title: 'Merge PDF',
+    desc: 'Combine multiple PDF files into one document in seconds.',
+    icon: <Plus size={28} />,
+    href: '/tools/pdf/merge',
+    color: 'var(--accent-rose)'
+  },
+  {
+    title: 'Split PDF',
+    desc: 'Extract pages from your PDF or save each page as a separate PDF.',
+    icon: <Scissors size={28} />,
+    href: '/tools/pdf/split',
+    color: 'var(--accent-purple)'
+  },
+  {
+    title: 'Compress PDF',
+    desc: 'Reduce the file size of your PDF while maintaining quality.',
+    icon: <Shrink size={28} />,
+    href: '/tools/pdf/compress',
+    color: 'var(--accent-cyan)'
+  },
+  {
+    title: 'Image to PDF',
+    desc: 'Convert multiple JPG and PNG images into a single PDF document.',
+    icon: <FileText size={28} />,
+    href: '/tools/pdf/image-to-pdf',
+    color: 'var(--accent-green)'
+  }
+];
+
+export default function PDFCategoryPage() {
+  return (
+    <div className={styles.categoryPage}>
+      <header className={styles.header}>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <div className={styles.breadcrumb}>
+            <Link href="/">Home</Link> / <span>PDF Tools</span>
+          </div>
+          <h1>PDF Tools</h1>
+          <p>Every tool you need to work with PDFs in one place. 100% private and offline.</p>
+        </motion.div>
+      </header>
+
+      <section className={styles.toolGrid}>
+        {PDF_TOOLS.map((tool, i) => (
+          <Link href={tool.href} key={i}>
+            <Card className={styles.toolCard}>
+              <div className={styles.toolIcon} style={{ color: tool.color }}>
+                {tool.icon}
+              </div>
+              <div className={styles.toolInfo}>
+                <h3>{tool.title}</h3>
+                <p>{tool.desc}</p>
+              </div>
+            </Card>
+          </Link>
+        ))}
+      </section>
+
+      <section className={styles.howTo}>
+        <h2>How to use ZeroTool PDF</h2>
+        <div className={styles.steps}>
+          <div className={styles.step}>
+            <div className={styles.stepNum}>1</div>
+            <h4>Select a Tool</h4>
+            <p>Choose the PDF operation you need from the list above.</p>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepNum}>2</div>
+            <h4>Upload Locally</h4>
+            <p>Drag and drop your files. They stay in your browser and never touch our servers.</p>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepNum}>3</div>
+            <h4>Process & Download</h4>
+            <p>Hit the action button and save your processed file instantly.</p>
+          </div>
+        </div>
+      </section>
+
+      <footer className={styles.pageFooter}>
+        <p>ZeroTool uses <strong>WebAssembly</strong> and <strong>Web Workers</strong> to process your files securely on your own hardware.</p>
+      </footer>
+    </div>
+  );
+}
