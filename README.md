@@ -63,7 +63,7 @@ Designed with a **Glassmorphism 2.0** aesthetic, ZeroTool combines a futuristic 
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-repo/zerotool.git
+git clone https://github.com/avinashs1ngh/zerotool.git
 cd zerotool
 npm install
 ```
