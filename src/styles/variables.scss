@@ -17,17 +17,3 @@ $transition-speed: 0.3s;
   justify-content: center;
 }
 
-@mixin glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}

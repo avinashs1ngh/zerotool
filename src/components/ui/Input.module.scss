@@ -1,4 +1,4 @@
-@import '../../styles/variables.scss';
+@use "../../styles/variables.scss" as vars;
 
 .wrapper {
   display: flex;
@@ -14,7 +14,7 @@
 }
 
 .input {
-  @include glass-panel;
+  @include vars.glass-panel;
   height: 40px;
   padding: 0 var(--spacing-sm);
   color: var(--text-primary);

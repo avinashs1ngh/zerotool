@@ -1,7 +1,7 @@
-@import '../../styles/variables.scss';
+@use "../../styles/variables.scss" as vars;
 
 .card {
-  @include glass-panel;
+  @include vars.glass-panel;
   display: flex;
   flex-direction: column;
   overflow: hidden;

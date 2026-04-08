@@ -12,23 +12,63 @@ export class WindowAIProvider implements AIProvider {
   };
 
   async checkAvailability(): Promise<boolean> {
-    if (typeof window !== 'undefined' && 'ai' in window && window.ai) {
-      try {
-        const canCreate = await window.ai.canCreateTextSession();
+    if (typeof window === 'undefined') return false;
+
+    // Check for various possible window.ai implementations (Gemini Nano)
+    try {
+      // Latest spec: window.ai.assistant or window.ai.languageModel
+      const ai = (window as any).ai;
+      if (!ai) return false;
+
+      if (ai.assistant || ai.languageModel) {
+        const canCreate = await (ai.assistant?.canCreate?.() || ai.languageModel?.canCreate?.());
         return canCreate === 'readily' || canCreate === 'after-download';
-      } catch (e) {
-        return false;
       }
+
+      // Legacy/Alternative spec
+      if (ai.canCreateTextSession) {
+        const canCreate = await ai.canCreateTextSession();
+        return canCreate === 'readily' || canCreate === 'after-download';
+      }
+    } catch (e) {
+      console.warn('AI availability check failed:', e);
+      return false;
     }
     return false;
   }
 
   async generateText(prompt: string, options?: AIGenerationOptions): Promise<string> {
-    if (!window.ai) throw new Error('window.ai not available');
-    const session = await window.ai.createTextSession();
-    const result = await session.prompt(prompt);
-    session.destroy();
-    return result;
+    const ai = (window as any).ai;
+    if (!ai) throw new Error('Browser AI (window.ai) is not available in this browser. Please use Chrome Dev/Canary and enable relevant flags.');
+
+    try {
+      // Modern spec (Assistant / LanguageModel)
+      const factory = ai.assistant || ai.languageModel;
+      if (factory) {
+        const session = await factory.create({
+          systemPrompt: options?.systemPrompt,
+          temperature: options?.temperature,
+          topK: options?.topK
+        });
+        const result = await session.prompt(prompt);
+        // Note: Newer specs might use session.destroy(), session.close(), or no manual destruction.
+        if (session.destroy) session.destroy();
+        else if (session.close) session.close();
+        return result;
+      }
+
+      // Legacy spec (TextSession)
+      if (ai.createTextSession) {
+        const session = await ai.createTextSession();
+        const result = await session.prompt(prompt);
+        if (session.destroy) session.destroy();
+        return result;
+      }
+    } catch (e: any) {
+      throw new Error(`Browser AI error: ${e.message}. (Ensure Gemini Nano is downloaded in chrome://components)`);
+    }
+
+    throw new Error('No compatible Browser AI API found.');
   }
 }
 

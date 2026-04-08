@@ -12,6 +12,7 @@ export interface AIGenerationOptions {
   systemPrompt?: string;
   temperature?: number;
   maxTokens?: number;
+  topK?: number;
 }
 
 export interface AIProvider {
@@ -20,17 +21,22 @@ export interface AIProvider {
   
   checkAvailability(): Promise<boolean>;
   generateText(prompt: string, options?: AIGenerationOptions): Promise<string>;
-  
-  // Optional generic method if we expand beyond text
-  // generateImage?() 
 }
 
-// Global window extension for browser-native AI
+// Global window extension for browser-native AI (Gemini Nano)
 declare global {
   interface Window {
     ai?: {
-      canCreateTextSession: () => Promise<string>;
-      createTextSession: () => Promise<any>;
+      assistant?: {
+        canCreate: () => Promise<string>;
+        create: (options?: any) => Promise<any>;
+      };
+      languageModel?: {
+        canCreate: () => Promise<string>;
+        create: (options?: any) => Promise<any>;
+      };
+      canCreateTextSession?: () => Promise<string>;
+      createTextSession?: () => Promise<any>;
     };
   }
 }

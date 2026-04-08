@@ -1,4 +1,4 @@
-@import '@/styles/variables.scss';
+@use '@/styles/variables.scss' as vars;
 
 .container {
   display: flex;
@@ -51,6 +51,17 @@
 .activeCard {
   border-color: var(--accent-green) !important;
   box-shadow: 0 0 15px rgba(0, 255, 102, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-sm);
+  
+  h3 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
 }
 
 .desc {
@@ -150,3 +161,66 @@
   color: var(--text-muted);
   font-style: italic;
 }
+
+.statusBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: inline-block;
+  
+  &.available {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+  }
+  
+  &.unavailable {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+}
+
+.troubleshooting {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  grid-column: 1 / -1;
+  
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      margin-bottom: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      
+      strong { color: #fff; }
+      code { 
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        color: var(--accent-green);
+      }
+    }
+  }
+}
+

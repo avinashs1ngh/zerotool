@@ -43,6 +43,9 @@ export default function PromptStudioPage() {
 
     setLoading(true);
     try {
+      if (!provider.details.isAvailable) {
+        throw new Error(`Provider "${provider.details.name}" is not currently available. Please check the 'Providers' tab for troubleshooting.`);
+      }
       const res = await provider.generateText(prompt);
       setResult(res);
     } catch (e: any) {
@@ -78,12 +81,19 @@ export default function PromptStudioPage() {
       {activeTab === 'settings' && (
         <div className={styles.settingsGrid}>
           {Object.values(providers).map((provider) => (
-            <Card key={provider.id} title={provider.details.name} className={activeProviderId === provider.id ? styles.activeCard : ''}>
+            <Card key={provider.id} className={activeProviderId === provider.id ? styles.activeCard : ''}>
+              <div className={styles.cardHeader}>
+                <div className={`${styles.statusBadge} ${provider.details.isAvailable ? styles.available : styles.unavailable}`}>
+                  {provider.details.isAvailable ? 'Ready' : 'Unavailable'}
+                </div>
+                <h3>{provider.details.name}</h3>
+              </div>
               <p className={styles.desc}>{provider.details.description}</p>
               
               <div className={styles.cardActions}>
                 <Button 
                   variant={activeProviderId === provider.id ? 'primary' : 'secondary'}
+                  disabled={!provider.details.isAvailable && provider.id === 'window.ai'}
                   onClick={() => setActiveProvider(provider.id)}
                 >
                   {activeProviderId === provider.id ? 'Active' : 'Select'}
@@ -91,6 +101,29 @@ export default function PromptStudioPage() {
               </div>
             </Card>
           ))}
+
+          {/* Troubleshooting for Browser AI */}
+          <div className={styles.troubleshooting}>
+            <h3><Bot size={18} /> How to enable Browser Native AI?</h3>
+            <p className={styles.desc}>Chrome built-in AI (Gemini Nano) is currently an experimental feature. If it shows "Unavailable", try these steps:</p>
+            <ul>
+              <li>
+                1. Use <strong>Chrome Dev</strong> or <strong>Canary</strong> (latest versions).
+              </li>
+              <li>
+                2. Go to <code>chrome://flags</code> and enable <strong>Enables optimization guide on device model</strong>.
+              </li>
+              <li>
+                3. Enable <strong>Prompt API for Gemini Nano</strong> in flags.
+              </li>
+              <li>
+                4. Go to <code>chrome://components</code> and ensure <strong>Optimization Guide On Device Model</strong> is updated/downloaded.
+              </li>
+              <li>
+                5. Restart Chrome and refresh ZeroTool.
+              </li>
+            </ul>
+          </div>
 
           <Card title="API Keys (Stored Locally)" className={styles.keysCard}>
             <p className={styles.desc}>Keys never leave your browser except to query the models.</p>
