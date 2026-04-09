@@ -134,22 +134,15 @@ export default function JsonFormatterPage() {
       </motion.div>
 
       <div className={styles.controls}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', marginRight: 'auto' }}>
+        <div className={styles.optionsArea}>
           <FileJson size={18} />
-          <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Options:</span>
+          <span>Spaces:</span>
           <select 
             value={indent} 
             onChange={(e) => setIndent(Number(e.target.value))}
-            style={{ 
-              background: 'rgba(255,255,255,0.05)', 
-              border: '1px solid var(--glass-border)',
-              borderRadius: '4px',
-              color: '#fff',
-              padding: '2px 8px'
-            }}
           >
-            <option value={2} style={{ background: '#111' }}>2 Spaces</option>
-            <option value={4} style={{ background: '#111' }}>4 Spaces</option>
+            <option value={2}>2 Spaces</option>
+            <option value={4}>4 Spaces</option>
           </select>
         </div>
 

@@ -2,39 +2,56 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { TerminalSquare, Fingerprint, KeyRound, QrCode, Palette, Hash } from 'lucide-react';
+import { 
+  TerminalSquare, Fingerprint, KeyRound, QrCode, 
+  Palette, Hash, Video, CreditCard, Minimize 
+} from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
 
 const UTILS_TOOLS = [
   {
-    title: 'UUID Generator',
-    desc: 'Generate secure v4 UUIDs instantly in your browser.',
-    icon: <Fingerprint size={28} />,
-    href: '/tools/utils/uuid',
+    title: 'Video Compress',
+    desc: 'Secure local video compression with zero uploads.',
+    icon: <Video size={28} />,
+    href: '/tools/utils/video',
+    color: 'var(--accent-primary)'
+  },
+  {
+    title: 'ID Card Maker',
+    desc: 'Generate professional ID cards from templates.',
+    icon: <CreditCard size={28} />,
+    href: '/tools/utils/id-maker',
     color: 'var(--accent-cyan)'
   },
   {
-    title: 'Password Gen',
-    desc: 'Create unbreakable passwords with customizable complexity.',
-    icon: <KeyRound size={28} />,
-    href: '/tools/utils/password',
+    title: 'Size Fixer',
+    desc: 'Precise size fixing (10kb, 20kb, 50kb) for docs.',
+    icon: <Minimize size={28} />,
+    href: '/tools/utils/size-fixer',
     color: 'var(--accent-purple)'
   },
   {
-    title: 'QR Generator',
-    desc: 'Turn any text or URL into a downloadable QR code.',
-    icon: <QrCode size={28} />,
-    href: '/tools/utils/qr',
+    title: 'UUID Gen',
+    desc: 'Generate secure v4 UUIDs instantly.',
+    icon: <Fingerprint size={28} />,
+    href: '/tools/utils/uuid',
     color: 'var(--accent-green)'
+  },
+  {
+    title: 'Password Gen',
+    desc: 'Create unbreakable passwords locally.',
+    icon: <KeyRound size={28} />,
+    href: '/tools/utils/password',
+    color: 'var(--accent-rose)'
   },
   {
     title: 'Color Palette',
     desc: 'Generate and fine-tune modern color palettes.',
     icon: <Palette size={28} />,
     href: '/tools/utils/palette',
-    color: 'var(--accent-rose)'
+    color: 'var(--accent-cyan)'
   }
 ];
 

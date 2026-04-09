@@ -1,0 +1,119 @@
+@use '@/styles/variables.scss' as vars;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.header {
+  margin-bottom: 40px;
+  .titleArea {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .icon {
+      color: var(--accent-primary);
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+    }
+    h1 { font-size: 2rem; }
+  }
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dropZone {
+  border: 2px dashed var(--glass-border);
+  border-radius: 24px;
+  padding: 60px;
+  text-align: center;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 32px;
+
+  &:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-tertiary);
+  }
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.fileCard {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--glass-border);
+
+  img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .fileMeta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .removeBtn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent-rose);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+}
+
+.card {
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--glass-border);
+  position: sticky;
+  top: 40px;
+
+  h3 { font-size: 1.1rem; margin-bottom: 20px; }
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+
+  span:last-child {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}

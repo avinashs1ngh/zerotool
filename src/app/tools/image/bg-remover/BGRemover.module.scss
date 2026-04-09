@@ -1,0 +1,113 @@
+@use '@/styles/variables.scss' as vars;
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.header {
+  margin-bottom: 40px;
+  .titleArea {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .icon {
+      color: var(--accent-primary);
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+    }
+    h1 { font-size: 2rem; }
+  }
+}
+
+.uploadArea {
+  border: 2px dashed var(--glass-border);
+  border-radius: 24px;
+  padding: 80px 40px;
+  text-align: center;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-tertiary);
+  }
+}
+
+.editorView {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+}
+
+.previewContainer {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background: white;
+  background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+                    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+                    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  
+  img {
+    width: 100%;
+    display: block;
+  }
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  
+  .sparkle {
+    color: var(--accent-primary);
+    animation: pulse 1.5s infinite;
+  }
+  p { font-weight: 600; color: var(--text-primary); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+}
+
+.infoBox {
+  margin-top: 48px;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  gap: 16px;
+  color: #0369a1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  
+  svg { flex-shrink: 0; color: #0ea5e9; }
+}

@@ -6,7 +6,8 @@ import { setSecret, getSecret } from '@/core/db';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Bot, Key, Settings, Sparkles } from 'lucide-react';
+import { Bot, Key, Settings, Sparkles, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import styles from './PromptStudio.module.scss';
 import { AIProviderId } from '@/core/ai/types';
 
@@ -61,6 +62,9 @@ export default function PromptStudioPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/ai" className={styles.backBtn}>
+            <ArrowLeft size={24} />
+          </Link>
           <Bot size={32} className={styles.icon} />
           <div>
             <h1>Prompt Studio</h1>

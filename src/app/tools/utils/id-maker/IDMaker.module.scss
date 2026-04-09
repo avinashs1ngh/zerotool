@@ -1,0 +1,126 @@
+@use '@/styles/variables.scss' as vars;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.header {
+  margin-bottom: 32px;
+  .titleArea {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    .icon {
+      color: var(--accent-primary);
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+    }
+    h1 { font-size: 2rem; }
+  }
+}
+
+.makerGrid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 32px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.inputGroup {
+  margin-bottom: 16px;
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--glass-border);
+    outline: none;
+    transition: all 0.2s;
+    
+    &:focus { border-color: var(--accent-primary); background: white; }
+  }
+}
+
+.previewCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.idCardPreview {
+  width: 500px;
+  max-width: 100%;
+  aspect-ratio: 1.58 / 1; // Standard CR80 ID card ratio
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.idCardCanvas {
+  width: 100%;
+  height: 100%;
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .templateBtn {
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--bg-tertiary);
+    border: 1.5px solid transparent;
+    text-align: left;
+    transition: all 0.2s;
+
+    &:hover { background: var(--bg-primary); }
+    &.active {
+      border-color: var(--accent-primary);
+      background: rgba(26, 115, 232, 0.05);
+      h5 { color: var(--accent-primary); }
+    }
+    
+    h5 { font-size: 0.9rem; margin-bottom: 2px; }
+    span { font-size: 0.7rem; color: var(--text-muted); }
+  }
+}
+
+.photoUpload {
+  border: 1px dashed var(--glass-border);
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  
+  img {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+}

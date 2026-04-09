@@ -2,39 +2,63 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FileText, Plus, Scissors, Shrink, FileSearch, Image as ImageIcon, Layout } from 'lucide-react';
+import { 
+  FileText, Plus, Scissors, Shrink, 
+  Camera, PenTool, FileType, Image as ImageIcon, Sparkles
+} from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
 
 const PDF_TOOLS = [
   {
+    title: 'Camera Scanner',
+    desc: 'Multi-page camera scanner with auto-capture & PDF export.',
+    icon: <Camera size={28} />,
+    href: '/tools/pdf/cam-scan',
+    color: 'var(--accent-primary)'
+  },
+  {
+    title: 'Doc Scanner',
+    desc: 'Apply pro scan filters to document photos (JPG/PNG).',
+    icon: <Sparkles size={28} />,
+    href: '/tools/pdf/scan',
+    color: 'var(--accent-cyan)'
+  },
+  {
+    title: 'PDF Editor',
+    desc: 'Add text, signatures, and images to your PDFs.',
+    icon: <PenTool size={28} />,
+    href: '/tools/pdf/edit',
+    color: 'var(--accent-cyan)'
+  },
+  {
+    title: 'Word to PDF',
+    desc: 'Securely convert Docx files to PDF offline.',
+    icon: <FileType size={28} />,
+    href: '/tools/pdf/word-to-pdf',
+    color: 'var(--accent-purple)'
+  },
+  {
     title: 'Merge PDF',
-    desc: 'Combine multiple PDF files into one document in seconds.',
+    desc: 'Combine multiple PDF files into one document.',
     icon: <Plus size={28} />,
     href: '/tools/pdf/merge',
     color: 'var(--accent-rose)'
   },
   {
     title: 'Split PDF',
-    desc: 'Extract pages from your PDF or save each page as a separate PDF.',
+    desc: 'Extract pages from your PDF into separate files.',
     icon: <Scissors size={28} />,
     href: '/tools/pdf/split',
-    color: 'var(--accent-purple)'
+    color: 'var(--accent-green)'
   },
   {
     title: 'Compress PDF',
-    desc: 'Reduce the file size of your PDF while maintaining quality.',
+    desc: 'Reduce file size while maintaining visibility.',
     icon: <Shrink size={28} />,
     href: '/tools/pdf/compress',
-    color: 'var(--accent-cyan)'
-  },
-  {
-    title: 'Image to PDF',
-    desc: 'Convert multiple JPG and PNG images into a single PDF document.',
-    icon: <FileText size={28} />,
-    href: '/tools/pdf/image-to-pdf',
-    color: 'var(--accent-green)'
+    color: 'var(--accent-primary)'
   }
 ];
 

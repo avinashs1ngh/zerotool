@@ -6,14 +6,20 @@
   justify-content: center;
   gap: var(--spacing-sm);
   border-radius: var(--border-radius-sm);
-  font-weight: 500;
+  font-weight: 600;
   transition: all var(--transition-speed);
   padding: 0 var(--spacing-md);
+  border: 1px solid transparent;
+  width: auto;
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+.fullWidth {
+  width: 100%;
 }
 
 .spinner {
@@ -27,21 +33,24 @@
 
 // Variants
 .primary {
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: var(--accent-primary);
+  color: white;
   
   &:hover:not(:disabled) {
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    background: var(--accent-primary-hover);
     transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
 }
 
 .secondary {
-  @include vars.glass-panel;
+  background: var(--bg-tertiary);
   color: var(--text-primary);
+  border-color: var(--glass-border);
   
   &:hover:not(:disabled) {
-    background: var(--glass-highlight);
+    background: var(--bg-primary);
+    border-color: var(--accent-primary);
   }
 }
 
@@ -51,7 +60,7 @@
   
   &:hover:not(:disabled) {
     color: var(--text-primary);
-    background: var(--glass-highlight);
+    background: var(--bg-tertiary);
   }
 }
 

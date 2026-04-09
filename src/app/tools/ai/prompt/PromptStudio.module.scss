@@ -18,22 +18,41 @@
 .titleArea {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 1.5rem;
+
+  .backBtn {
+    @include vars.flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: var(--glass-border);
+      color: var(--accent-primary);
+      transform: translateX(-4px);
+    }
+  }
 
   .icon {
-    color: var(--accent-green);
-    filter: drop-shadow(0 0 8px rgba(0, 255, 102, 0.4));
+    color: var(--accent-primary);
+    filter: drop-shadow(0 0 8px rgba(26, 115, 232, 0.3));
   }
 
   h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
   }
 
   p {
     color: var(--text-secondary);
     font-size: 0.95rem;
+    margin-top: 0.25rem;
   }
 }
 

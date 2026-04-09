@@ -81,7 +81,7 @@ export default function ImageConverterPage() {
       <header className={styles.header}>
         <div className={styles.titleArea}>
           <Link href="/tools/image" className={styles.backBtn}>
-            <ArrowLeft size={20} />
+            <ArrowLeft size={24} />
           </Link>
           <Repeat size={32} className={styles.icon} />
           <div>

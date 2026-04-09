@@ -1,14 +1,14 @@
 // Variables
 $sidebar-width: 260px;
-$transition-speed: 0.3s;
+$transition-speed: 0.2s;
 
 @mixin glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 @mixin flex-center {
@@ -17,3 +17,11 @@ $transition-speed: 0.3s;
   justify-content: center;
 }
 
+@mixin card-hover {
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-primary);
+  }
+}

@@ -2,39 +2,56 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ImageIcon, Shrink, Maximize, Repeat, Scissors, Wand2, FileText } from 'lucide-react';
+import { 
+  ImageIcon, Shrink, Maximize, Repeat, 
+  UserCircle, Eraser, FileText 
+} from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
 
 const IMAGE_TOOLS = [
   {
-    title: 'Image Compressor',
-    desc: 'Reduce file size of JPG, PNG, and WebP images while keeping quality.',
-    icon: <Shrink size={28} />,
-    href: '/tools/image/compress',
+    title: 'Passport Photo',
+    desc: 'Create standard passport size photos in seconds.',
+    icon: <UserCircle size={28} />,
+    href: '/tools/image/passport',
+    color: 'var(--accent-primary)'
+  },
+  {
+    title: 'BG Remover',
+    desc: 'Remove image backgrounds locally using AI.',
+    icon: <Eraser size={28} />,
+    href: '/tools/image/bg-remover',
     color: 'var(--accent-cyan)'
   },
   {
-    title: 'Resize / Crop',
-    desc: 'Change image dimensions or crop specific areas for better focus.',
-    icon: <Maximize size={28} />,
-    href: '/tools/image/resize',
-    color: 'var(--accent-purple)'
-  },
-  {
     title: 'Format Converter',
-    desc: 'Convert images instantly between PNG, JPG, WebP, and AVIF.',
+    desc: 'Convert images between PNG, JPG, WebP, and AVIF.',
     icon: <Repeat size={28} />,
     href: '/tools/image/convert',
     color: 'var(--accent-green)'
   },
   {
-    title: 'Image to PDF',
-    desc: 'Convert multiple JPG and PNG images into a single PDF document.',
-    icon: <FileText size={28} />,
-    href: '/tools/pdf/image-to-pdf',
+    title: 'Compressor',
+    desc: 'Reduce file size while keeping high quality.',
+    icon: <Shrink size={28} />,
+    href: '/tools/image/compress',
     color: 'var(--accent-rose)'
+  },
+  {
+    title: 'Resize / Crop',
+    desc: 'Change dimensions or crop specific areas.',
+    icon: <Maximize size={28} />,
+    href: '/tools/image/resize',
+    color: 'var(--accent-purple)'
+  },
+  {
+    title: 'Image to PDF',
+    desc: 'Convert multiple images into a single PDF.',
+    icon: <FileText size={28} />,
+    href: '/tools/image/to-pdf',
+    color: 'var(--accent-primary)'
   }
 ];
 
