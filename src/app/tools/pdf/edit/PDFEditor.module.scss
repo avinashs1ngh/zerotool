@@ -6,10 +6,10 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 1.5rem 1.5rem 5rem;
 
   @media (max-width: 768px) {
-    padding: 20px 16px 60px;
+    padding: 0.75rem 0.75rem 4rem;
   }
 }
 
@@ -17,32 +17,77 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 32px;
+  margin-bottom: 1.25rem;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
+
+  @media (max-width: 600px) {
+    margin-bottom: 0.75rem;
+  }
 
   .titleArea {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+
+    .backBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      
+      &:hover {
+        background: var(--glass-border);
+        color: var(--accent-primary);
+        transform: translateX(-4px);
+      }
+
+      @media (max-width: 600px) {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+      }
+    }
 
     .icon {
       color: var(--accent-primary);
-      padding: 12px;
-      background: rgba(26, 115, 232, 0.08);
-      border-radius: 12px;
+      padding: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      
+      @media (max-width: 600px) {
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+        border-radius: 8px;
+        svg { width: 20px; height: 20px; }
+      }
     }
 
     h1 {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: var(--text-primary);
+      @media (max-width: 600px) { font-size: 1.25rem; }
     }
 
     p {
       color: var(--text-secondary);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      @media (max-width: 600px) { display: none; }
     }
   }
 }
@@ -113,6 +158,9 @@
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
+    // On mobile, canvas comes first, tools go below
+    display: flex;
+    flex-direction: column;
   }
 }
 
@@ -129,6 +177,20 @@
   gap: 4px;
   position: sticky;
   top: 24px;
+
+  @media (max-width: 900px) {
+    position: static;
+    // Switch to horizontal scrollable toolbar on mobile
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px 16px;
+    border-radius: 16px;
+    gap: 8px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+    // Place last in order on mobile so canvas shows first
+    order: 2;
+  }
 }
 
 .panelLabel {
@@ -139,6 +201,10 @@
   color: var(--text-muted);
   padding: 8px 4px 6px;
   margin: 0;
+
+  @media (max-width: 900px) {
+    display: none; // Hide section labels in horizontal toolbar
+  }
 }
 
 .panelSection {
@@ -153,17 +219,47 @@
     border-bottom: none;
     padding-bottom: 0;
   }
+
+  @media (max-width: 900px) {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding-bottom: 0;
+    border-bottom: none;
+    border-right: 1px solid var(--glass-border);
+    padding-right: 12px;
+    margin-right: 4px;
+    align-items: center;
+    white-space: nowrap;
+
+    &:last-of-type {
+      border-right: none;
+      padding-right: 0;
+    }
+  }
 }
 
 .panelFooter {
   margin-top: auto;
   padding-top: 16px;
+
+  @media (max-width: 900px) {
+    margin-top: 0;
+    padding-top: 0;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
 
 .toolList {
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+    gap: 6px;
+  }
 }
 
 .toolBtn {
@@ -180,6 +276,7 @@
   cursor: pointer;
   transition: all 0.15s;
   text-align: left;
+  white-space: nowrap;
 
   &:hover {
     background: var(--bg-tertiary);
@@ -195,6 +292,15 @@
     background: #fee2e2;
     color: #dc2626;
     border-color: #fca5a5;
+  }
+
+  @media (max-width: 900px) {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-secondary);
+    gap: 6px;
   }
 }
 
@@ -214,6 +320,14 @@
   flex-direction: column;
   gap: 8px;
   padding: 4px 2px;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+
+    label { display: none; } // Hide labels in compact mode
+  }
 
   label {
     font-size: 0.75rem;
@@ -269,15 +383,31 @@
   background: var(--bg-tertiary);
   border-radius: 20px;
   padding: 32px;
-  overflow: auto;
+  overflow: hidden; // Prevent horizontal scroll on desktop
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   min-height: 600px;
 
-  @media (max-width: 600px) {
-    padding: 16px;
+  @media (max-width: 900px) {
+    padding: 12px;
+    min-height: unset;
+    gap: 12px;
+    order: 1; // Canvas comes before tools
+    overflow: auto;
+  }
+}
+
+// Wrapper that scales the canvas to fit viewport on mobile
+.canvasScaler {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    overflow: hidden;
   }
 }
 

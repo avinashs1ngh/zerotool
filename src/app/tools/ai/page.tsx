@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings } from 'lucide-react';
+import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
@@ -42,28 +42,45 @@ export default function AICategoryPage() {
   return (
     <div className={styles.categoryPage}>
       <header className={styles.header}>
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <div className={styles.breadcrumb}>
-            <Link href="/">Home</Link> / <span>AI Tools</span>
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }}
+          className={styles.titleArea}
+        >
+          <Link href="/" className={styles.backBtn}>
+            <ArrowLeft size={24} />
+          </Link>
+          <Bot size={32} className={styles.icon} />
+          <div>
+            <h1>AI Tools</h1>
+            <p>Unleash the power of AI providers securely from within your browser.</p>
           </div>
-          <h1>AI Tools</h1>
-          <p>Unleash the power of AI providers securely from within your browser.</p>
         </motion.div>
       </header>
 
       <section className={styles.toolGrid}>
         {AI_TOOLS.map((tool, i) => (
-          <Link href={tool.href} key={i}>
-            <Card className={styles.toolCard}>
-              <div className={styles.toolIcon} style={{ color: tool.color }}>
-                {tool.icon}
-              </div>
-              <div className={styles.toolInfo}>
-                <h3>{tool.title}</h3>
-                <p>{tool.desc}</p>
-              </div>
-            </Card>
-          </Link>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05 }}
+          >
+            <Link href={tool.href}>
+              <Card 
+                className={styles.toolCard}
+                style={{ '--tool-color': tool.color } as React.CSSProperties}
+              >
+                <div className={styles.toolIcon}>
+                  {tool.icon}
+                </div>
+                <div className={styles.toolInfo}>
+                  <h3>{tool.title}</h3>
+                  <p>{tool.desc}</p>
+                </div>
+              </Card>
+            </Link>
+          </motion.div>
         ))}
       </section>
 

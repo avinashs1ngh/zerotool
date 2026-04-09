@@ -7,7 +7,7 @@ import { useUIStore } from '@/store/ui-store';
 import styles from './Navbar.module.scss';
 
 export function Navbar() {
-  const { toggleSidebar, isSidebarOpen } = useUIStore();
+  const { toggleSidebar, setSearchOpen } = useUIStore();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -42,7 +42,7 @@ export function Navbar() {
 
       <div className={styles.right}>
         {/* Command Palette Hint */}
-        <div className={styles.searchHint} onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}>
+        <div className={styles.searchHint} onClick={() => setSearchOpen(true)}>
           <Search size={18} />
           <span>Search tools...</span>
           <kbd>Ctrl+K</kbd>

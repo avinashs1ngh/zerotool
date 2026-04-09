@@ -104,7 +104,7 @@ export default function PDFMergePage() {
           <FileText size={32} className={styles.icon} />
           <div>
             <h1>Merge PDF</h1>
-            <p>Combine multiple PDFs into one. Processing happens securely in your browser.</p>
+            <p>Combine multiple PDFs into one. </p>
           </div>
         </div>
       </header>

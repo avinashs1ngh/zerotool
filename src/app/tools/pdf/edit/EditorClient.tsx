@@ -4,11 +4,12 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import * as pdfjs from 'pdfjs-dist';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 import {
   PenTool, Upload, Download, Type,
   Pen, Eraser, ChevronLeft, ChevronRight,
   Loader2, X, Check, FileX, RotateCcw,
-  Move, Trash2
+  Move, Trash2, ArrowLeft
 } from 'lucide-react';
 import styles from './PDFEditor.module.scss';
 
@@ -65,9 +66,10 @@ export default function PDFEditorClient() {
   // ─── Dragging ─────────────────────────────────────────────────
   const dragging = useRef<{ id: number; startX: number; startY: number; origX: number; origY: number } | null>(null);
 
-  // ─── Refs ─────────────────────────────────────────────────────
+  // ─── Refs ─────────────────────────────────────────────────
   const containerRef = useRef<HTMLDivElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasAreaRef = useRef<HTMLDivElement>(null);
 
   // ══════════════════════════════════════════════
   // PDF Loading & Rendering
@@ -107,10 +109,21 @@ export default function PDFEditorClient() {
   };
 
   const renderPage = useCallback(async (pageIdx: number) => {
-    if (!pdfJsDoc || !previewCanvasRef.current) return;
+    if (!pdfJsDoc || !previewCanvasRef.current || !canvasAreaRef.current) return;
     try {
       const page = await pdfJsDoc.getPage(pageIdx + 1);
-      const viewport = page.getViewport({ scale: 1.5 });
+
+      // Step 1: Get natural page dimensions at scale=1
+      const baseViewport = page.getViewport({ scale: 1 });
+
+      // Step 2: Calculate available width (container - padding)
+      const availableWidth = canvasAreaRef.current.offsetWidth - 48; // 24px padding each side
+      const maxWidth = Math.min(availableWidth, 900); // cap at 900px on large screens
+
+      // Step 3: Compute render scale to fit exactly
+      const renderScale = maxWidth / baseViewport.width;
+
+      const viewport = page.getViewport({ scale: renderScale });
       const canvas = previewCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -123,6 +136,14 @@ export default function PDFEditorClient() {
       console.error('Render error:', err);
     }
   }, [pdfJsDoc]);
+
+  // Re-render on resize too
+  useEffect(() => {
+    if (!pdfJsDoc) return;
+    const onResize = () => renderPage(currentPage);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [pdfJsDoc, currentPage, renderPage]);
 
   useEffect(() => {
     if (pdfJsDoc) renderPage(currentPage);
@@ -195,7 +216,6 @@ export default function PDFEditorClient() {
       if (!dragging.current) return;
       const dx = e.clientX - dragging.current.startX;
       const dy = e.clientY - dragging.current.startY;
-      
       setElements(prev => prev.map(el =>
         el.id === dragging.current!.id
           ? { ...el, x: Math.max(0, dragging.current!.origX + dx), y: Math.max(0, dragging.current!.origY + dy) }
@@ -208,6 +228,37 @@ export default function PDFEditorClient() {
     return () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseup', onUp);
+    };
+  }, []);
+
+  // Touch dragging for mobile
+  const onElementTouchStart = (e: React.TouchEvent, id: number) => {
+    e.stopPropagation();
+    setSelectedId(id);
+    const el = elements.find(el => el.id === id);
+    if (!el) return;
+    const t = e.touches[0];
+    dragging.current = { id, startX: t.clientX, startY: t.clientY, origX: el.x, origY: el.y };
+  };
+
+  useEffect(() => {
+    const onTouchMove = (e: TouchEvent) => {
+      if (!dragging.current) return;
+      const t = e.touches[0];
+      const dx = t.clientX - dragging.current.startX;
+      const dy = t.clientY - dragging.current.startY;
+      setElements(prev => prev.map(el =>
+        el.id === dragging.current!.id
+          ? { ...el, x: Math.max(0, dragging.current!.origX + dx), y: Math.max(0, dragging.current!.origY + dy) }
+          : el
+      ));
+    };
+    const onTouchEnd = () => { dragging.current = null; };
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd);
+    return () => {
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
     };
   }, []);
 
@@ -396,7 +447,10 @@ export default function PDFEditorClient() {
       {/* ── Header ───────────────────────────────── */}
       <header className={styles.header}>
         <div className={styles.titleArea}>
-          <PenTool size={32} className={styles.icon} />
+          <Link href="/tools/pdf" className={styles.backBtn}>
+            <ArrowLeft size={22} />
+          </Link>
+          <PenTool size={28} className={styles.icon} />
           <div>
             <h1>PDF Editor</h1>
             <p>Add text, signatures, and annotations offline — nothing leaves your device.</p>
@@ -510,83 +564,84 @@ export default function PDFEditorClient() {
             </div>
           </aside>
 
-          {/* ── Canvas Area ───────────────────────── */}
-          <main className={styles.canvasArea}>
+          <main className={styles.canvasArea} ref={canvasAreaRef}>
             <div
               className={`${styles.canvasContainer} ${activeTool === 'text' ? styles.textCursor : ''}`}
-              style={{ width: pageSize.width, height: pageSize.height }}
+              style={{
+                width: pageSize.width,
+                height: pageSize.height,
+              }}
               ref={containerRef}
               onClick={handleCanvasClick}
             >
-              {/* PDF render */}
-              <canvas ref={previewCanvasRef} className={styles.pdfCanvas} />
+                <canvas ref={previewCanvasRef} className={styles.pdfCanvas} />
 
-              {/* Loading overlay */}
-              {isLoading && (
-                <div className={styles.loaderOverlay}>
-                  <Loader2 className={styles.spin} size={48} />
-                  <p>Rendering PDF…</p>
-                </div>
-              )}
-
-              {/* Inline text input */}
-              {textPosition && (
-                <div
-                  className={styles.inlineInputWrap}
-                  style={{ left: textPosition.x, top: textPosition.y }}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <input
-                    ref={textInputRef}
-                    className={styles.inlineInput}
-                    style={{ fontSize: textFontSize, color: textColor }}
-                    value={pendingText}
-                    onChange={e => setPendingText(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') commitText();
-                      if (e.key === 'Escape') cancelText();
-                    }}
-                    placeholder="Type here…"
-                  />
-                  <div className={styles.inlineActions}>
-                    <button className={styles.inlineConfirm} onClick={commitText} title="Confirm (Enter)"><Check size={14} /></button>
-                    <button className={styles.inlineCancel} onClick={cancelText} title="Cancel (Esc)"><X size={14} /></button>
+                {isLoading && (
+                  <div className={styles.loaderOverlay}>
+                    <Loader2 className={styles.spin} size={48} />
+                    <p>Rendering PDF…</p>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Placed elements */}
-              {pageElements.map(el => (
-                <div
-                  key={el.id}
-                  className={`${styles.floatingElement} ${selectedId === el.id ? styles.selected : ''}`}
-                  style={{ left: el.x, top: el.y }}
-                  onMouseDown={e => onElementMouseDown(e, el.id)}
-                  onClick={e => { e.stopPropagation(); setSelectedId(el.id); }}
-                >
-                  <div className={styles.dragHandle}><Move size={12} /></div>
-
-                  {el.type === 'text' && (
-                    <span style={{ fontSize: el.fontSize, color: el.color }}>{el.content}</span>
-                  )}
-                  {el.type === 'signature' && (
-                    <img
-                      src={el.content}
-                      alt="Signature"
-                      style={{ width: el.width, height: el.height, display: 'block' }}
-                      draggable={false}
-                    />
-                  )}
-
-                  <button
-                    className={styles.removeBtn}
-                    onClick={e => { e.stopPropagation(); removeElement(el.id); }}
-                    title="Remove"
+                {/* Inline text input */}
+                {textPosition && (
+                  <div
+                    className={styles.inlineInputWrap}
+                    style={{ left: textPosition.x, top: textPosition.y }}
+                    onClick={e => e.stopPropagation()}
                   >
-                    <X size={12} />
-                  </button>
-                </div>
-              ))}
+                    <input
+                      ref={textInputRef}
+                      className={styles.inlineInput}
+                      style={{ fontSize: textFontSize, color: textColor }}
+                      value={pendingText}
+                      onChange={e => setPendingText(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') commitText();
+                        if (e.key === 'Escape') cancelText();
+                      }}
+                      placeholder="Type here…"
+                    />
+                    <div className={styles.inlineActions}>
+                      <button className={styles.inlineConfirm} onClick={commitText} title="Confirm (Enter)"><Check size={14} /></button>
+                      <button className={styles.inlineCancel} onClick={cancelText} title="Cancel (Esc)"><X size={14} /></button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Placed elements */}
+                {pageElements.map(el => (
+                  <div
+                    key={el.id}
+                    className={`${styles.floatingElement} ${selectedId === el.id ? styles.selected : ''}`}
+                    style={{ left: el.x, top: el.y }}
+                    onMouseDown={e => onElementMouseDown(e, el.id)}
+                    onTouchStart={e => onElementTouchStart(e, el.id)}
+                    onClick={e => { e.stopPropagation(); setSelectedId(el.id); }}
+                  >
+                    <div className={styles.dragHandle}><Move size={12} /></div>
+
+                    {el.type === 'text' && (
+                      <span style={{ fontSize: el.fontSize, color: el.color }}>{el.content}</span>
+                    )}
+                    {el.type === 'signature' && (
+                      <img
+                        src={el.content}
+                        alt="Signature"
+                        style={{ width: el.width, height: el.height, display: 'block' }}
+                        draggable={false}
+                      />
+                    )}
+
+                    <button
+                      className={styles.removeBtn}
+                      onClick={e => { e.stopPropagation(); removeElement(el.id); }}
+                      title="Remove"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
             </div>
 
             {/* Page navigation below canvas */}

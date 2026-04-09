@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { 
   FileText, Plus, Scissors, Shrink, 
-  Camera, PenTool, FileType, Image as ImageIcon, Sparkles
+  Camera, PenTool, FileType, Image as ImageIcon, Sparkles, ArrowLeft
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
@@ -69,28 +69,41 @@ export default function PDFCategoryPage() {
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
+          className={styles.titleArea}
         >
-          <div className={styles.breadcrumb}>
-            <Link href="/">Home</Link> / <span>PDF Tools</span>
+          <Link href="/" className={styles.backBtn}>
+            <ArrowLeft size={24} />
+          </Link>
+          <FileText size={32} className={styles.icon} />
+          <div>
+            <h1>PDF Tools</h1>
           </div>
-          <h1>PDF Tools</h1>
-          <p>Every tool you need to work with PDFs in one place. 100% private and offline.</p>
         </motion.div>
       </header>
 
       <section className={styles.toolGrid}>
         {PDF_TOOLS.map((tool, i) => (
-          <Link href={tool.href} key={i}>
-            <Card className={styles.toolCard}>
-              <div className={styles.toolIcon} style={{ color: tool.color }}>
-                {tool.icon}
-              </div>
-              <div className={styles.toolInfo}>
-                <h3>{tool.title}</h3>
-                <p>{tool.desc}</p>
-              </div>
-            </Card>
-          </Link>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.05 }}
+          >
+            <Link href={tool.href}>
+              <Card 
+                className={styles.toolCard} 
+                style={{ '--tool-color': tool.color } as React.CSSProperties}
+              >
+                <div className={styles.toolIcon}>
+                  {tool.icon}
+                </div>
+                <div className={styles.toolInfo}>
+                  <h3>{tool.title}</h3>
+                  <p>{tool.desc}</p>
+                </div>
+              </Card>
+            </Link>
+          </motion.div>
         ))}
       </section>
 

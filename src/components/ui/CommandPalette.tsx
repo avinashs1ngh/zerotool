@@ -1,36 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Command } from 'cmdk';
 import { useRouter } from 'next/navigation';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
+import { useUIStore } from '@/store/ui-store';
 import styles from './CommandPalette.module.scss';
 
 export function CommandPalette() {
-  const [open, setOpen] = useState(false);
+  const { isSearchOpen, setSearchOpen } = useUIStore();
   const router = useRouter();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setSearchOpen(!isSearchOpen);
       }
     };
 
     document.addEventListener('keydown', down);
     return () => document.removeEventListener('keydown', down);
-  }, []);
+  }, [isSearchOpen, setSearchOpen]);
 
   const onSelect = (href: string) => {
-    setOpen(false);
+    setSearchOpen(false);
     router.push(href);
   };
 
-  if (!open) return null;
+  if (!isSearchOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={() => setOpen(false)}>
+    <div className={styles.overlay} onClick={() => setSearchOpen(false)}>
       <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
         <Command>
           <div className={styles.searchWrap}>

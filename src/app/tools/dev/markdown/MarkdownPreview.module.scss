@@ -4,27 +4,32 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem; // Reduced
   min-height: calc(100vh - 80px);
+
+  @media (max-width: 768px) {
+    padding: 0.75rem; // Reduced
+  }
 }
 
 .header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.25rem; // Reduced
   
   .titleArea {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem; // Reduced
     
     .backBtn {
       @include vars.flex-center;
-      width: 44px; // Standardized
-      height: 44px;
+      width: 38px; // Reduced
+      height: 38px;
       border-radius: 12px;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       color: var(--text-secondary);
       transition: all 0.3s ease;
+      flex-shrink: 0;
       
       &:hover {
         background: var(--glass-border);
@@ -36,19 +41,33 @@
     .icon {
       color: var(--accent-cyan);
       filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.4));
+      width: 28px;
+      height: 28px;
     }
     
     h1 {
-      font-size: 2rem;
+      font-size: 1.5rem; // Reduced
       font-weight: 800;
       color: var(--text-primary);
       margin: 0;
+      line-height: 1.2;
     }
     
     p {
       color: var(--text-secondary);
-      margin-top: 0.25rem;
-      font-size: 0.95rem;
+      margin-top: 0.15rem;
+      font-size: 0.85rem; // Reduced
+    }
+  }
+
+  @media (max-width: 600px) {
+    margin-bottom: 0.75rem;
+    .titleArea {
+      gap: 0.75rem;
+      .backBtn { width: 32px; height: 32px; border-radius: 8px; }
+      .icon { width: 22px; height: 22px; }
+      h1 { font-size: 1.15rem; }
+      p { display: none; }
     }
   }
 }
@@ -57,11 +76,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  height: 600px;
+  min-height: 500px;
   
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
-    height: auto;
   }
 }
 
@@ -70,14 +88,20 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 300px;
+
+  @media (min-width: 969px) {
+    height: 100%;
+  }
   
   .paneHeader {
     padding: 0.75rem 1.25rem;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--bg-tertiary);
     border-bottom: 1px solid var(--glass-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
     
     span {
       font-size: 0.85rem;
@@ -94,7 +118,7 @@
   background: transparent;
   border: none;
   padding: 1.5rem;
-  color: #e2e8f0;
+  color: var(--text-primary);
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.95rem;
   line-height: 1.6;
@@ -102,7 +126,7 @@
   outline: none;
   
   &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--text-muted);
   }
 }
 
@@ -110,12 +134,12 @@
   flex: 1;
   padding: 1.5rem;
   overflow-y: auto;
-  background: rgba(15, 15, 17, 0.4);
-  color: #e2e8f0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   line-height: 1.6;
   
   /* Markdown Styles */
-  h1, h2, h3, h4 { color: #fff; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
+  h1, h2, h3, h4 { color: var(--text-primary); margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
   h1 { font-size: 1.8rem; }
   h2 { font-size: 1.5rem; }
   h3 { font-size: 1.2rem; }
@@ -126,7 +150,8 @@
   li { margin-bottom: 0.5rem; }
   
   code {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--bg-tertiary);
+    color: var(--accent-cyan);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.9rem;
@@ -134,7 +159,7 @@
   }
   
   pre {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-tertiary);
     padding: 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -156,7 +181,7 @@
   
   table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
   th, td { border: 1px solid var(--glass-border); padding: 8px 12px; }
-  th { background: rgba(255, 255, 255, 0.05); text-align: left; }
+  th { background: var(--bg-tertiary); text-align: left; }
 }
 
 .actions {
