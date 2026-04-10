@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { 
   Camera, Zap, RotateCcw, X, Check, 
   Trash2, ChevronLeft, Download, ImageIcon, FlipHorizontal,
-  Sparkles, Layers, ArrowUp, ArrowDown, Crop, Maximize
+  Sparkles, Layers, ArrowUp, ArrowDown, Crop, Maximize, ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PDFDocument } from 'pdf-lib';
@@ -371,7 +372,9 @@ export default function CamScannerClient() {
           )}
         </div>
         <div className={styles.topBar}>
-          <button className={styles.iconBtn} onClick={() => setView('review')}><ChevronLeft size={24} /></button>
+          <Link href="/tools/pdf" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <div className={styles.pageCount}>{pages.length} Pages</div>
           <button className={`${styles.iconBtn} ${isAutoCapture ? styles.active : ''}`} onClick={() => setIsAutoCapture(!isAutoCapture)}><Zap size={20} /></button>
         </div>
@@ -403,6 +406,9 @@ export default function CamScannerClient() {
   return (
     <div className={styles.reviewView}>
       <div className={styles.reviewHeader}>
+        <Link href="/tools/pdf" className={styles.backBtn}>
+          <ArrowLeft size={20} />
+        </Link>
         <button className={styles.iconBtn} onClick={() => setView('camera')}><ChevronLeft size={24} /></button>
         <h2>Review Documents</h2>
         <div style={{ width: 44 }} />

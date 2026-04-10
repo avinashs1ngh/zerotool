@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   FileText, Image as ImageIcon, Code, Bot, 
-  TerminalSquare, X, Zap 
+  TerminalSquare, X, Zap, BrainCircuit 
 } from 'lucide-react';
 import { useUIStore } from '@/store/ui-store';
 import styles from './Sidebar.module.scss';
@@ -25,6 +25,12 @@ const CATEGORIES = [
     href: '/tools/image'
   },
   {
+    title: 'Bria AI',
+    icon: <BrainCircuit size={20} />,
+    color: 'var(--accent-purple)',
+    href: '/tools/bria'
+  },
+  {
     title: 'Dev & Text',
     icon: <Code size={20} />,
     color: 'var(--accent-purple)',
@@ -39,7 +45,7 @@ const CATEGORIES = [
   {
     title: 'Utilities',
     icon: <TerminalSquare size={20} />,
-    color: '#ffffff',
+    color: 'var(--accent-primary)',
     href: '/tools/utils'
   }
 ];

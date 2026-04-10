@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AIProviderId, AIProvider } from '../core/ai/types';
-import { WindowAIProvider, OpenAIProvider, AnthropicProvider } from '../core/ai/providers';
+import { WindowAIProvider, OpenAIProvider, AnthropicProvider, NanoBananaProvider } from '../core/ai/providers';
 import { getSetting, setSetting } from '../core/db';
 
 interface AIStore {
@@ -16,7 +16,8 @@ interface AIStore {
 const instances = {
   'window.ai': new WindowAIProvider(),
   'openai': new OpenAIProvider(),
-  'anthropic': new AnthropicProvider()
+  'anthropic': new AnthropicProvider(),
+  'nanobanana': new NanoBananaProvider()
 };
 
 export const useAIStore = create<AIStore>((set, get) => ({

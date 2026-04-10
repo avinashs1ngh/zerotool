@@ -95,6 +95,9 @@ export default function CompressPDFPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/pdf" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <Shrink size={32} className={styles.icon} />
           <div>
             <h1>Compress PDF</h1>

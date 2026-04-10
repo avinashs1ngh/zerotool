@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { 
   Minimize, Upload, Download, Trash2, 
-  CheckCircle2, FileImage, Settings2 
+  CheckCircle2, FileImage, Settings2, ArrowLeft 
 } from 'lucide-react';
 import styles from './SizeFixer.module.scss';
 import { compressToTargetSize } from '@/utils/canvas-utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
-const TARGET_PRESETS = [10, 20, 50, 100, 200, 500];
+const TARGET_PRESETS = [20, 50, 100];
 
 export default function SizeFixerPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -61,6 +62,9 @@ export default function SizeFixerPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/utils" className={styles.backBtn}>
+            <ArrowLeft size={24} />
+          </Link>
           <Minimize size={32} className={styles.icon} />
           <div>
             <h1>Size Fixer</h1>

@@ -58,11 +58,13 @@
 
 .makerGrid {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 450px 1fr;
   gap: 32px;
+  align-items: start;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1100px) {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 
@@ -102,14 +104,16 @@
 }
 
 .idCardPreview {
-  width: 500px;
-  max-width: 100%;
-  aspect-ratio: 1.58 / 1; // Standard CR80 ID card ratio
+  width: 100%;
+  max-width: 550px;
+  aspect-ratio: 1.58 / 1;
   background: white;
-  border-radius: 16px;
-  box-shadow: var(--shadow-lg);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
   overflow: hidden;
-  border: 1px solid #ddd;
+  border: 1px solid var(--glass-border);
+  position: sticky;
+  top: 2rem;
 }
 
 .idCardCanvas {
@@ -119,42 +123,60 @@
 
 .templateGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin-bottom: 24px;
+
+  @media (max-width: 500px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   .templateBtn {
     padding: 12px;
     border-radius: 12px;
     background: var(--bg-tertiary);
-    border: 1.5px solid transparent;
+    border: 2px solid transparent;
     text-align: left;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    cursor: pointer;
 
-    &:hover { background: var(--bg-primary); }
+    &:hover { 
+      background: var(--bg-secondary);
+      border-color: rgba(26, 115, 232, 0.2);
+    }
+    
     &.active {
       border-color: var(--accent-primary);
-      background: rgba(26, 115, 232, 0.05);
+      background: rgba(26, 115, 232, 0.1);
       h5 { color: var(--accent-primary); }
     }
     
-    h5 { font-size: 0.9rem; margin-bottom: 2px; }
-    span { font-size: 0.7rem; color: var(--text-muted); }
+    h5 { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+    span { font-size: 0.65rem; color: var(--text-muted); display: block; }
   }
 }
 
 .photoUpload {
-  border: 1px dashed var(--glass-border);
-  padding: 16px;
-  border-radius: 12px;
+  border: 2px dashed var(--glass-border);
+  padding: 20px;
+  border-radius: 16px;
   text-align: center;
   cursor: pointer;
+  background: var(--bg-tertiary);
+  transition: all 0.3s ease;
   
+  &:hover {
+    border-color: var(--accent-primary);
+    background: rgba(26, 115, 232, 0.05);
+  }
+
   img {
-    width: 80px;
-    height: 100px;
+    width: 100px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 8px;
+    border-radius: 8px;
+    margin: 0 auto 12px;
+    border: 2px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   }
 }

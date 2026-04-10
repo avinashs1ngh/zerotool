@@ -74,6 +74,19 @@
   }
 }
 
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  
+  &:hover:not(:disabled) {
+    background: var(--glass-highlight);
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+  }
+}
+
 // Sizes
 .sm {
   height: 32px;

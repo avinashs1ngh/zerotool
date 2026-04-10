@@ -1,0 +1,411 @@
+@use "@/styles/variables.scss" as vars;
+
+/* ─── Page Shell ─────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+/* ─── Compact Header ─────────────────────────────────────── */
+.header {
+  margin-bottom: 1rem;
+
+  @media (min-width: 768px) {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.titleArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .backBtn {
+    @include vars.flex-center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+
+    &:hover {
+      color: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+  }
+
+  .icon {
+    flex-shrink: 0;
+    color: var(--accent-purple);
+  }
+
+  h1 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    line-height: 1.2;
+
+    @media (min-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    display: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
+}
+
+/* ─── Mode Tab Bar (Horizontal Pill Tabs) ───────────────── */
+.modeBar {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;                // prevent clipping of focus ring
+  margin-bottom: 1rem;
+
+  &::-webkit-scrollbar { display: none; }
+
+  @media (min-width: 768px) {
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+}
+
+.modeTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  svg { width: 14px; height: 14px; }
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--accent-purple);
+  }
+
+  &.active {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    svg { width: 16px; height: 16px; }
+  }
+}
+
+/* ─── Main Layout ────────────────────────────────────────── */
+.editorLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+}
+
+/* ─── Config Sidebar (desktop) / Panel (mobile) ──────────  */
+.configPanel {
+  @include vars.glass-panel;
+  border-radius: 16px;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
+}
+
+.configLabel {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-purple);
+  margin-bottom: 0.75rem;
+}
+
+.optGroup {
+  margin-bottom: 0.75rem;
+
+  .optLabel {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+  }
+
+  textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    resize: none;
+    outline: none;
+    height: 72px;
+    transition: border-color 0.2s;
+
+    &:focus { border-color: var(--accent-purple); }
+  }
+
+  select {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus { border-color: var(--accent-purple); }
+  }
+}
+
+.ratioGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.4rem;
+
+  button {
+    padding: 0.45rem 0.25rem;
+    border-radius: 8px;
+    background: var(--bg-tertiary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1.5px solid transparent;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+
+    &:hover { border-color: var(--glass-border); color: var(--text-primary); }
+
+    &.active {
+      background: rgba(139, 92, 246, 0.15);
+      border-color: var(--accent-purple);
+      color: var(--text-primary);
+    }
+  }
+}
+
+/* ─── Execute Button ─────────────────────────────────────── */
+.executeBtn {
+  margin-top: 0.75rem;
+  height: 46px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.35);
+  }
+}
+
+.removeBgHint {
+  margin-top: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ─── Central Stage ──────────────────────────────────────── */
+.stage {
+  min-height: 300px;
+
+  @media (min-width: 768px) {
+    min-height: 420px;
+  }
+}
+
+/* Drop Zone */
+.dropZone {
+  width: 100%;
+  border: 2px dashed var(--glass-border);
+  border-radius: 18px;
+  background: var(--glass-bg);
+  @include vars.flex-center;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.25s;
+  min-height: 220px;
+
+  @media (min-width: 768px) {
+    min-height: 360px;
+    padding: 3rem 2rem;
+    border-radius: 24px;
+  }
+
+  &:hover, &.dragging {
+    border-color: var(--accent-purple);
+    background: rgba(139, 92, 246, 0.04);
+  }
+
+  .dropIcon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(139, 92, 246, 0.12);
+    @include vars.flex-center;
+    color: var(--accent-purple);
+
+    @media (min-width: 768px) {
+      width: 68px;
+      height: 68px;
+    }
+  }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+
+    @media (min-width: 768px) {
+      font-size: 1.25rem;
+    }
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    max-width: 240px;
+  }
+}
+
+/* Processing Overlay */
+.processingBox {
+  width: 100%;
+  min-height: 220px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.4);
+  @include vars.flex-center;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+
+  @media (min-width: 768px) {
+    min-height: 360px;
+    border-radius: 24px;
+  }
+
+  .scanLine {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-purple);
+    box-shadow: 0 0 16px var(--accent-purple);
+    animation: scanDown 2s ease-in-out infinite;
+  }
+
+  p {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent-purple);
+  }
+}
+
+@keyframes scanDown {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(300px); }
+  100% { transform: translateY(0); }
+}
+
+/* Image Result */
+.resultBox {
+  width: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: black;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  @media (min-width: 768px) {
+    border-radius: 24px;
+  }
+
+  img, .resultImg {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    max-height: 65vh;
+    min-height: 120px;
+    background: #111;
+    animation: imgReveal 0.8s ease;
+  }
+
+  .resultActions {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.6);
+    flex-wrap: wrap;
+  }
+}
+
+@keyframes imgReveal {
+  from { opacity: 0; filter: blur(12px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* Error */
+.errorBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid var(--accent-rose);
+  color: var(--accent-rose);
+  font-size: 0.875rem;
+  font-weight: 600;
+}

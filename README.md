@@ -1,96 +1,105 @@
-# 🌌 ZeroTool
+# 🌌 Nano Banana AI Image Studio
+### *The Ultimate Visual-First AI Playground & Utility Suite*
 
-**The Ultimate Local-First Utility Box.**  
-*Privacy-focused, 100% Client-side, Premium Experience.*
+**Zero-Server Privacy. Professional Performance. Premium Aesthetics.**
 
 ---
 
 ## ✨ Overview
 
-**ZeroTool** is a heavy-duty utility suite built for the modern web. Unlike traditional online tools, ZeroTool performs every single operation **in your browser**. Your files never touch a server, ensuring 100% data privacy and lightning-fast performance.
+**Nano Banana AI Image Studio** (powered by ZeroTool) is a comprehensive, production-grade creative engine built for 2026. Designed with a **Glass 2.0** aesthetic, it combines cutting-edge Generative AI with a suite of essential file and developer utilities — all running **100% locally in your browser**.
 
-Designed with a **Glassmorphism 2.0** aesthetic, ZeroTool combines a futuristic dark interface with professional-grade functionality.
-
----
-
-## 🛠️ Key Features
-
-### 📄 PDF Utilities
-- **Merge PDF**: Combine multiple documents into one seamlessly.
-- **Split PDF**: Extract specific ranges or split every page into separate files.
-- **Compress PDF**: Optimize file size while maintaining visual fidelity.
-- **Image to PDF**: Convert JPG/PNG collections into professional PDF documents.
-- *New:* **Renaming Support** — Control your final filenames before saving.
-
-### 🖼️ Image Processing
-- **Image Compressor**: Reduce file sizes with live optimization stats.
-- **Image Resizer**: Pixel-perfect scaling with Aspect Ratio locking.
-- **Privacy-First**: High-resolution processing using local Blobs (no Data URL limits).
-
-### ⚙️ Developer & System Utils
-- **UUID Generator**: Secure v4 UUID generation for developers.
-- **Offline Mode**: Works without an internet connection once loaded.
-- **Progressive Web App (PWA)**: Installable on your desktop or mobile device.
+Your files never leave your machine. No servers, no tracking, just pure computational power delivered via WebAssembly and advanced client-side processing.
 
 ---
 
-## 💎 Design Philosophy
+## 🎨 AI Image Studio (Bria AI Integration)
 
-- **Premium UI**: Crafted with smooth gradients, glass layers, and high-contrast typography.
-- **Micro-interactions**: Powered by **Framer Motion** for a fluid, reactive feel.
-- **Mobile First**: Fully responsive layout with a toggleable drawer system.
-- **Global Dropzone**: Drag and drop any file anywhere on the screen to start.
+Unlock the power of **Bria AI** with a pixel-perfect interface designed for professional output.
+
+- **Prompt Architect**: Design complex, multi-layered prompts with a structural, mobile-optimized interface.
+- **Bria AI Generator**: High-fidelity image synthesis with instant visual feedback.
+- **Magic Editor**: 
+  - **Remove Background**: Pixel-perfect masking using AI.
+  - **Enhance & Upscale**: Intelligent resolution Boosting.
+  - **Object Removal**: Seamless in-painting for clean compositions.
+- **Secure Image Proxy**: Custom server-side proxying for authenticated CloudFront delivery, bypassing browser referral restrictions.
 
 ---
 
-## 🚀 Tech Stack
+## 📄 Pro PDF Engine
 
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router + Turbopack)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Animation**: [Framer Motion](https://www.framer.com/motion/)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Styling**: SCSS Modules (Custom Glassmorphic System)
-- **Processing Engine**:
-  - [pdf-lib](https://pdf-lib.js.org/) (PDF Manipulation)
-  - [JSZip](https://stuk.github.io/jszip/) (Archiving)
+A heavy-duty PDF lifecycle suite that replaces the need for paid online services.
+
+- **Camera & Doc Scanner**: Turn your mobile device into a high-end scanner with professional filters (Magic Color, High Contrast B&W, Grayscale).
+- **Advanced Compression**: Multi-tier compression (Basic, Recommended, Extreme) with live size savings data.
+- **Full Lifecycle**: Merge, Split, Edit, and convert Image-to-PDF with manual file ordering and renaming.
+- **Renaming Support**: Full control over output filenames for organized workflows.
+
+---
+
+## 🎬 Media & Digital Darkroom
+
+- **Video Compressor**: Powered by **FFmpeg.wasm**, compress high-definition videos (WhatsApp, Discord, Email presets) directly in your browser.
+- **Passport Photo Maker**: Generate country-specific passport photos (India, US, UK, China, etc.) with custom print grids.
+- **High-Res Processing**: Large-file support using Blobs and high-performance canvas manipulation.
+
+---
+
+## 🛠️ The Forge (Developer Tools)
+
+A suite of essential micro-tools for modernized development workflows.
+
+- **Data Serialization**: Base64 Encoder/Decoder, JSON Formatter/Validator.
+- **Coding Helpers**: Markdown Live Preview, Regex Tester, Diff Checker.
+- **Utilities**: UUID v4 Generator, URL Encoder/Decoder, Palette/Color Generator.
+
+---
+
+## 💎 Design Philosophy (Glass 2.0)
+
+- **Cinematic Experience**: Smooth transitions and reveals powered by **Framer Motion**.
+- **Modern HSL Tokens**: A curated dark-mode palette with neon accents and high-contrast typography.
+- **Micro-interactions**: Interactive hover states, glass-blur layers, and haptic-feel feedback.
+- **Mobile-First UX**: Compact headers, horizontal-scrolling tabs, and scroll-free tool configurations.
+
+---
+
+## 🚀 Technical Architecture
+
+- **Core**: Next.js 16 (App Router) + TypeScript
+- **Rendering**: Turbopack for lightning-fast HMR and builds.
+- **Wasm Power**: FFmpeg.wasm for client-side video trans-coding.
+- **Processing**: pdf-lib (PDF), react-easy-crop (Imaging), JSZip (Archiving).
+- **Persistence**: Zustand for lightning-fast state management and IDB for large data caching.
 
 ---
 
 ## 👨‍💻 Development
 
-### Getting Started
-
-Clone the repository and install dependencies:
-
+### Setup
 ```bash
 git clone https://github.com/avinashs1ngh/zerotool.git
 cd zerotool
 npm install
 ```
 
-### Essential Scripts
-
-- **`npm run dev`**: Launch development server with HMR.
-- **`npm run build`**: Create a production-ready optimization build.
-- **`npm run preview`**: Preview the production build locally (Port 3001).
-
----
-
-## 🔒 Privacy & Security
-
-ZeroTool is built on the **Zero-Server** principle.
-- **No Uploads**: Files stay on your machine.
-- **No Analytics**: We don't track your data.
-- **No Accounts**: Use it instantly, no registration required.
+### Scripts
+- `npm run dev`: Development server.
+- `npm run build`: Production optimization.
+- `npm run preview`: Preview production build on Port 3001.
 
 ---
 
-## 📜 License
+## 🛡️ Privacy & Security
 
-Distributed under the MIT License. See `LICENSE` for more information.
+We believe your data belongs to you.
+- **Zero-Server**: No file is ever uploaded. All logic happens in RAM/Local Storage.
+- **No Analytics**: No trackers, no cookies, no spying.
+- **Secure Sessions**: CloudFront signed URLs are proxied securely without exposing credentials.
 
 ---
 
 <p align="center">
-  Built with ❤️ for privacy and speed.
+  Built with ❤️ by the Nano Banana Team.
 </p>

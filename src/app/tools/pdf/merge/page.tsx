@@ -130,7 +130,7 @@ export default function PDFMergePage() {
                   />
                   <label htmlFor="pdf-upload" className={styles.uploadLabel}>
                     <Plus size={24} />
-                    <span>Select PDFs or Drop them anywhere</span>
+                    <span>Select PDFs</span>
                   </label>
                 </div>
 

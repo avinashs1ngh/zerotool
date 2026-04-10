@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import {
   Camera, Upload, Download, RotateCcw,
   CheckCircle2, Loader2, X, Image as ImageIcon,
-  FileText, Sparkles
+  FileText, Sparkles, ArrowLeft
 } from 'lucide-react';
 import styles from './DocScanner.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -167,6 +168,9 @@ export default function DocScannerPage() {
       {/* ── Header ── */}
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/pdf" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <div className={styles.iconWrap}>
             <Camera size={24} />
           </div>

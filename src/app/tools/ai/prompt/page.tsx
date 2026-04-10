@@ -10,6 +10,31 @@ import { Bot, Key, Settings, Sparkles, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import styles from './PromptStudio.module.scss';
 import { AIProviderId } from '@/core/ai/types';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants: any = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
 
 export default function PromptStudioPage() {
   const { providers, activeProviderId, setActiveProvider, initialize, isInitializing } = useAIStore();
@@ -59,8 +84,13 @@ export default function PromptStudioPage() {
   if (isInitializing) return <div className={styles.container}>Loading AI Engine...</div>;
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
+    <motion.div 
+      className={styles.container}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.header className={styles.header} variants={itemVariants}>
         <div className={styles.titleArea}>
           <Link href="/tools/ai" className={styles.backBtn}>
             <ArrowLeft size={24} />
@@ -68,7 +98,7 @@ export default function PromptStudioPage() {
           <Bot size={32} className={styles.icon} />
           <div>
             <h1>Prompt Studio</h1>
-            <p>Generate, test, and iterate AI prompts strictly offline/client-side.</p>
+            <p className="hidden sm:block">Test AI prompts strictly client-side.</p>
           </div>
         </div>
         
@@ -80,12 +110,12 @@ export default function PromptStudioPage() {
             <Settings size={16} /> Providers
           </Button>
         </div>
-      </header>
+      </motion.header>
 
       {activeTab === 'settings' && (
         <div className={styles.settingsGrid}>
           {Object.values(providers).map((provider) => (
-            <Card key={provider.id} className={activeProviderId === provider.id ? styles.activeCard : ''}>
+            <div key={provider.id} className={`${styles.glassCard} ${activeProviderId === provider.id ? styles.activeCard : ''}`}>
               <div className={styles.cardHeader}>
                 <div className={`${styles.statusBadge} ${provider.details.isAvailable ? styles.available : styles.unavailable}`}>
                   {provider.details.isAvailable ? 'Ready' : 'Unavailable'}
@@ -103,7 +133,7 @@ export default function PromptStudioPage() {
                   {activeProviderId === provider.id ? 'Active' : 'Select'}
                 </Button>
               </div>
-            </Card>
+            </div>
           ))}
 
           {/* Troubleshooting for Browser AI */}
@@ -112,25 +142,31 @@ export default function PromptStudioPage() {
             <p className={styles.desc}>Chrome built-in AI (Gemini Nano) is currently an experimental feature. If it shows "Unavailable", try these steps:</p>
             <ul>
               <li>
-                1. Use <strong>Chrome Dev</strong> or <strong>Canary</strong> (latest versions).
+                <span>1.</span>
+                <span>Use <strong>Chrome Dev</strong> or <strong>Canary</strong> (latest versions).</span>
               </li>
               <li>
-                2. Go to <code>chrome://flags</code> and enable <strong>Enables optimization guide on device model</strong>.
+                <span>2.</span>
+                <span>Go to <code>chrome://flags</code> and enable <strong>Enables optimization guide on device model</strong>.</span>
               </li>
               <li>
-                3. Enable <strong>Prompt API for Gemini Nano</strong> in flags.
+                <span>3.</span>
+                <span>Enable <strong>Prompt API for Gemini Nano</strong> in flags.</span>
               </li>
               <li>
-                4. Go to <code>chrome://components</code> and ensure <strong>Optimization Guide On Device Model</strong> is updated/downloaded.
+                <span>4.</span>
+                <span>Go to <code>chrome://components</code> and ensure <strong>Optimization Guide On Device Model</strong> is updated/downloaded.</span>
               </li>
               <li>
-                5. Restart Chrome and refresh ZeroTool.
+                <span>5.</span>
+                <span>Restart Chrome and refresh ZeroTool.</span>
               </li>
             </ul>
           </div>
 
-          <Card title="API Keys (Stored Locally)" className={styles.keysCard}>
-            <p className={styles.desc}>Keys never leave your browser except to query the models.</p>
+          <div className={`${styles.glassCard} ${styles.keysCard}`}>
+            <h3>API Keys</h3>
+            <p className={styles.desc}>Keys are stored locally in your browser's IndexedDB and never leave your machine except to authenticate with the AI provider.</p>
             <div className={styles.keyForm}>
               <Input 
                 label="OpenAI API Key" 
@@ -150,36 +186,67 @@ export default function PromptStudioPage() {
                 <Key size={16} /> Save secure keys
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       )}
 
       {activeTab === 'studio' && (
-        <div className={styles.studioLayout}>
-          <Card className={styles.promptCard}>
+        <motion.div className={styles.studioLayout} variants={itemVariants}>
+          <div className={`${styles.glassCard} ${styles.promptCard}`}>
+            <AnimatePresence>
+              {loading && (
+                <motion.div 
+                  className={styles.lockOverlay}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <Bot size={32} className="animate-bounce" />
+                  <span>Thinking...</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <textarea 
               className={styles.textarea} 
               placeholder="Enter your prompt here..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              disabled={loading}
             />
             <div className={styles.studioActions}>
                <span className={styles.providerBadge}>
                  Provider: {activeProviderId ? providers[activeProviderId].details.name : 'None Selected'}
                </span>
-               <Button onClick={handleGenerate} isLoading={loading}>
+               <Button onClick={handleGenerate} isLoading={loading} disabled={!prompt.trim()}>
                  Generate
                </Button>
             </div>
-          </Card>
+          </div>
 
-          <Card className={styles.resultCard} title="Output">
-            <div className={styles.resultContent}>
-              {result || <span className={styles.placeholder}>Output will appear here...</span>}
+          <div className={`${styles.glassCard} ${styles.resultCard}`}>
+            <div className="flex items-center gap-2 mb-4 border-b border-glass-border pb-2">
+              <Sparkles size={16} className="text-accent-primary" />
+              <h3 className="font-black text-xs uppercase tracking-widest">Model Output</h3>
             </div>
-          </Card>
-        </div>
+            <div className={styles.resultContent}>
+              {result ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {result}
+                </motion.div>
+              ) : (
+                <div className={styles.placeholder}>
+                  <Bot size={40} className="mb-4 opacity-10" />
+                  <span>Your results will appear here after generation.</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

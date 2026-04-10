@@ -1,0 +1,224 @@
+@use "@/styles/variables.scss" as vars;
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  min-height: calc(100vh - 80px);
+
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+  }
+}
+
+.header {
+  
+  .titleArea {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    
+    .backBtn {
+      @include vars.flex-center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      
+      &:hover {
+        background: var(--glass-border);
+        color: var(--accent-purple);
+        transform: scale(1.05) rotate(-3deg);
+      }
+    }
+    
+    .icon {
+      color: var(--accent-purple);
+    }
+    
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+
+      @media (max-width: 600px) {
+        font-size: 1rem;
+      }
+    }
+    
+    p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.architectGrid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.labelGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-purple);
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.card {
+  @include vars.glass-panel;
+  padding: 1.5rem;
+  border-radius: 20px;
+
+  textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1rem;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: none;
+    outline: none;
+    margin-bottom: 1.5rem;
+    
+    &:focus {
+      border-color: var(--accent-purple);
+    }
+  }
+}
+
+.architectBtn {
+  height: 50px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.resultPanel {
+  min-height: 400px;
+  position: relative;
+}
+
+.placeholder {
+  height: 400px;
+  @include vars.glass-panel;
+  border-radius: 20px;
+  border: 2px dashed var(--glass-border);
+  @include vars.flex-center;
+  flex-direction: column;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}
+
+.processing {
+  height: 400px;
+  @include vars.flex-center;
+  flex-direction: column;
+  
+  h3 { font-size: 1.25rem; font-weight: 800; margin-top: 2rem; color: var(--accent-purple); }
+}
+
+.dnaAnimation {
+  position: relative;
+  width: 40px;
+  height: 80px;
+  
+  .strand {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-purple);
+    border-radius: 50%;
+    animation: dna 2s infinite ease-in-out;
+    
+    &:nth-child(2) {
+      animation-delay: -1s;
+      background: var(--accent-cyan);
+    }
+  }
+}
+
+@keyframes dna {
+  0%, 100% { transform: translateY(0) scale(1); z-index: 10; }
+  50% { transform: translateY(60px) scale(0.5); z-index: 1; opacity: 0.3; }
+}
+
+.resultContainer {
+  @include vars.glass-panel;
+  padding: 2rem;
+  border-radius: 24px;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  
+  h4 { font-size: 1.15rem; font-weight: 800; }
+}
+
+.dataGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mainInfo {
+  padding: 1.5rem;
+  background: rgba(139, 92, 246, 0.05);
+  border-left: 4px solid var(--accent-purple);
+  border-radius: 12px;
+  
+  h5 { font-size: 0.7rem; text-transform: uppercase; color: var(--accent-purple); margin-bottom: 0.5rem; }
+  p { line-height: 1.6; }
+}
+
+.detailsSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.detailCard {
+  padding: 1.25rem;
+  background: var(--bg-tertiary);
+  border-radius: 16px;
+  
+  h5 { font-size: 0.65rem; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.5rem; }
+  p { font-size: 0.9rem; font-weight: 600; }
+}
+
+.jsonView {
+  margin-top: 1rem;
+  background: black;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-height: 300px;
+  overflow: auto;
+  
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: #a5d6ff;
+  }
+}

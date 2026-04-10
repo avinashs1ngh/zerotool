@@ -151,17 +151,20 @@
 // ─────────────────────────────────────────────────────────────
 // Top Bar Controls
 // ─────────────────────────────────────────────────────────────
-.topBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-  z-index: 20;
+.backBtn {
+  @include vars.flex-center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: white;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05) rotate(-3deg);
+  }
 }
 
 .iconBtn {

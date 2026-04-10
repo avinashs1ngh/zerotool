@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import Cropper from 'react-easy-crop';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -103,6 +104,9 @@ export default function PassportPhotoPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/image" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <UserCircle size={32} className={styles.icon} />
           <div>
             <h1>Passport Photo Maker</h1>

@@ -33,13 +33,6 @@ const PDF_TOOLS = [
     color: 'var(--accent-cyan)'
   },
   {
-    title: 'Word to PDF',
-    desc: 'Securely convert Docx files to PDF offline.',
-    icon: <FileType size={28} />,
-    href: '/tools/pdf/word-to-pdf',
-    color: 'var(--accent-purple)'
-  },
-  {
     title: 'Merge PDF',
     desc: 'Combine multiple PDF files into one document.',
     icon: <Plus size={28} />,
@@ -106,28 +99,6 @@ export default function PDFCategoryPage() {
           </motion.div>
         ))}
       </section>
-
-      <section className={styles.howTo}>
-        <h2>How to use ZeroTool PDF</h2>
-        <div className={styles.steps}>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>1</div>
-            <h4>Select a Tool</h4>
-            <p>Choose the PDF operation you need from the list above.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>2</div>
-            <h4>Upload Locally</h4>
-            <p>Drag and drop your files. They stay in your browser and never touch our servers.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>3</div>
-            <h4>Process & Download</h4>
-            <p>Hit the action button and save your processed file instantly.</p>
-          </div>
-        </div>
-      </section>
-
       <footer className={styles.pageFooter}>
         <p>ZeroTool uses <strong>WebAssembly</strong> and <strong>Web Workers</strong> to process your files securely on your own hardware.</p>
       </footer>

@@ -69,20 +69,6 @@ const TOOLS = [
     href: '/tools/image/to-pdf',
     category: 'Image'
   },
-  {
-    title: 'Word to PDF',
-    desc: 'Securely convert Docx files to PDF offline.',
-    icon: <FileText size={32} />,
-    href: '/tools/pdf/word-to-pdf',
-    category: 'Document'
-  },
-  {
-    title: 'BG Remover',
-    desc: 'Remove image backgrounds locally using AI.',
-    icon: <Eraser size={32} />,
-    href: '/tools/image/bg-remover',
-    category: 'Image'
-  }
 ];
 
 const CATEGORIES = [
@@ -142,32 +128,9 @@ export default function Home() {
 
       {/* Main Tools Grid */}
       <div className={styles.mainSection}>
-        <section className={styles.tools}>
-          <div className={styles.sectionHeader}>
-            <h2>Featured Tools</h2>
-            <p>Most popular and recently added utilities</p>
-          </div>
-          <div className={styles.grid}>
-            {TOOLS.map((tool, i) => (
-              <Link href={tool.href} key={i}>
-                <Card className={styles.catCard}>
-                  <div className={styles.catIcon}>
-                    {tool.icon}
-                  </div>
-                  <div className={styles.toolMeta}>
-                    <span className={styles.badge}>{tool.category}</span>
-                    <h3>{tool.title}</h3>
-                    <p>{tool.desc}</p>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </section>
-
         <section className={styles.categories}>
           <div className={styles.sectionHeader}>
-            <h2>Browse by Category</h2>
+            <h2>Categories</h2>
             <p>Explore our full suite of professional tools</p>
           </div>
           <div className={styles.categoryGrid}>

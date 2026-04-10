@@ -80,6 +80,10 @@ html, body {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-md);
+  }
 }
 a {
   color: inherit;

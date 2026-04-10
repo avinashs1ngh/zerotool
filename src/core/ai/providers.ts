@@ -155,3 +155,69 @@ export class AnthropicProvider implements AIProvider {
     return data.content[0].text;
   }
 }
+
+export class NanoBananaProvider implements AIProvider {
+  id: AIProviderId = 'nanobanana';
+  details: AIProviderDetails = {
+    id: 'nanobanana',
+    name: 'Nano Banana AI',
+    description: 'Specialized image suite for generation, editing, and upscaling.',
+    isAvailable: true, // Assuming it's always available as it's the core focus now
+    requiresKey: false,
+  };
+
+  async checkAvailability(): Promise<boolean> {
+    return true; 
+  }
+
+  // Implementation of generateText to satisfy AIProvider interface
+  async generateText(prompt: string, options?: AIGenerationOptions): Promise<string> {
+    return "Nano Banana is focusing on Image Generation. Use generateImage instead.";
+  }
+
+  async listModels(): Promise<any> {
+    const res = await fetch('/api/ai/nanobanana/models');
+    if (!res.ok) throw new Error(`Nano Banana API error: ${res.statusText}`);
+    return res.json();
+  }
+
+  async generateImage(options: any): Promise<any> {
+    const res = await fetch('/api/ai/nanobanana/images/generations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error?.message || `Nano Banana API error: ${res.statusText}`);
+    }
+    return res.json();
+  }
+
+  async editImage(options: { prompt: string; image: string }): Promise<any> {
+    const res = await fetch('/api/ai/nanobanana/images/edits', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error?.message || `Nano Banana API error: ${res.statusText}`);
+    }
+    return res.json();
+  }
+
+  async upscaleImage(options: { image: string; upscale_factor?: string; response_format?: string }): Promise<any> {
+    const res = await fetch('/api/ai/nanobanana/images/upscale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(options),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.error?.message || `Nano Banana API error: ${res.statusText}`);
+    }
+    return res.json();
+  }
+}
+

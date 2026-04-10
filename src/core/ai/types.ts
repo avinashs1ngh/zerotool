@@ -1,4 +1,4 @@
-export type AIProviderId = 'window.ai' | 'openai' | 'anthropic';
+export type AIProviderId = 'window.ai' | 'openai' | 'anthropic' | 'nanobanana';
 
 export interface AIProviderDetails {
   id: AIProviderId;
@@ -15,6 +15,31 @@ export interface AIGenerationOptions {
   topK?: number;
 }
 
+export interface NanoBananaModel {
+  id: string;
+  object: string;
+  created: number;
+  owned_by: string;
+}
+
+export interface NanoBananaImageOptions {
+  prompt: string;
+  model?: string;
+  n?: number;
+  size?: string;
+  quality?: 'auto' | 'standard' | 'low' | 'medium' | 'high' | 'hd';
+  response_format?: 'url' | 'b64_json';
+}
+
+export interface NanoBananaImageResponse {
+  created: number;
+  data: Array<{
+    url?: string;
+    b64_json?: string;
+    revised_prompt?: string;
+  }>;
+}
+
 export interface AIProvider {
   id: AIProviderId;
   details: AIProviderDetails;
@@ -22,6 +47,7 @@ export interface AIProvider {
   checkAvailability(): Promise<boolean>;
   generateText(prompt: string, options?: AIGenerationOptions): Promise<string>;
 }
+
 
 // Global window extension for browser-native AI (Gemini Nano)
 declare global {

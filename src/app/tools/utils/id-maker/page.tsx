@@ -5,26 +5,30 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { 
   CreditCard, Upload, Download, RotateCcw, 
-  User, Calendar, Hash, Type, Image as ImageIcon
+  User, Calendar, Hash, Type, Image as ImageIcon, ArrowLeft
 } from 'lucide-react';
 import styles from './IDMaker.module.scss';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const TEMPLATES = [
-  { id: 'professional', name: 'Professional', desc: 'Sleek & modern design' },
-  { id: 'standard', name: 'Standard Govt', desc: 'Classic horizontal layout' },
+  { id: 'modern', name: 'Modern Pro', desc: 'Sleek & high-tech' },
+  { id: 'classic', name: 'Classic Gold', desc: 'Standard business look' },
+  { id: 'minimal', name: 'Minimalist', desc: 'Clean & whitespace-heavy' },
 ];
 
 export default function IDMakerPage() {
   const [formData, setFormData] = useState({
-    name: 'JOHN DOE',
-    dob: '01/01/1990',
-    idNumber: '1234 5678 9012',
-    address: '123 Main St, New York, NY',
-    gender: 'Male'
+    name: 'ELARA VANCE',
+    organization: 'QUANTUM DYNAMICS',
+    role: 'SENIOR ARCHITECT',
+    dob: '12/04/1992',
+    idNumber: 'QD-9942-X',
+    address: 'Tech District, Silicon Valley, CA',
+    gender: 'Female'
   });
   const [photo, setPhoto] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState('professional');
+  const [selectedTemplate, setSelectedTemplate] = useState('modern');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,10 +36,11 @@ export default function IDMakerPage() {
   };
 
   const onPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
+    const file = e.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
       reader.onload = () => setPhoto(reader.result as string);
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -45,84 +50,180 @@ export default function IDMakerPage() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set high resolution for printing (approx 1000px width)
+    // High fidelity dimensions
     canvas.width = 1011;
     canvas.height = 638;
 
-    // Background
-    if (selectedTemplate === 'professional') {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // Accents
-      ctx.fillStyle = '#1a73e8';
-      ctx.fillRect(0, 0, 30, canvas.height);
-      ctx.fillRect(0, 0, canvas.width, 100);
-      
+    const { name, organization, role, dob, idNumber, address, gender } = formData;
+
+    // Base Layer
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (selectedTemplate === 'modern') {
+      // Modern Sidebar Gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      grad.addColorStop(0, '#0f172a');
+      grad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 300, canvas.height);
+
+      // Accent lines
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillRect(0, 580, canvas.width, 58);
+
+      // Header Text
       ctx.fillStyle = 'white';
-      ctx.font = 'bold 40px Inter, Arial';
-      ctx.fillText('IDENTITY CARD', 60, 65);
-    } else {
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = '#1a73e8';
-      ctx.lineWidth = 15;
-      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+      ctx.font = 'bold 32px Inter, Arial, sans-serif';
+      ctx.fillText('OFFICIAL IDENTITY', 40, 60);
       
-      ctx.fillStyle = '#1a73e8';
-      ctx.font = 'bold 36px Arial';
-      ctx.fillText('DOCUMENT OF IDENTITY', 300, 60);
-    }
-
-    // Photo
-    if (photo) {
-      const img = new Image();
-      img.onload = () => {
-        ctx.drawImage(img, 60, 140, 220, 280);
-        ctx.strokeStyle = '#ddd';
-        ctx.strokeRect(60, 140, 220, 280);
-        finishDrawing();
-      };
-      img.src = photo;
-    } else {
-      ctx.fillStyle = '#f1f5f9';
-      ctx.fillRect(60, 140, 220, 280);
-      ctx.fillStyle = '#94a3b8';
       ctx.font = '24px Arial';
-      ctx.fillText('NO PHOTO', 110, 290);
-      finishDrawing();
-    }
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(organization || 'COMPANY NAME', 40, 95);
 
-    function finishDrawing() {
-      if (!ctx) return;
-      ctx.fillStyle = '#1e293b';
-      
-      // Text Fields
-      ctx.font = 'bold 24px Arial';
-      ctx.fillText('NAME:', 320, 180);
-      ctx.font = '36px Arial';
-      ctx.fillText(formData.name || '---', 320, 230);
+      if (photo) {
+        const img = new Image();
+        img.onload = () => {
+          // Circular or Rounded Photo
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(40, 140, 220, 260, 20);
+          ctx.clip();
+          ctx.drawImage(img, 40, 140, 220, 260);
+          ctx.restore();
+          
+          ctx.strokeStyle = '#3b82f6';
+          ctx.lineWidth = 4;
+          ctx.strokeRect(40, 140, 220, 260);
+          renderModernText();
+        };
+        img.src = photo;
+      } else {
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(40, 140, 220, 260);
+        ctx.fillStyle = 'white';
+        ctx.font = '20px Arial';
+        ctx.fillText('NO PHOTO', 100, 280);
+        renderModernText();
+      }
 
-      ctx.font = 'bold 24px Arial';
-      ctx.fillText('DATE OF BIRTH:', 320, 290);
-      ctx.font = '32px Arial';
-      ctx.fillText(formData.dob || '---', 320, 335);
+      function renderModernText() {
+        if (!ctx) return;
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 22px Arial';
+        ctx.fillText('FULL NAME', 340, 180);
+        ctx.font = '800 52px Arial';
+        ctx.fillText(name || '---', 340, 240);
 
-      ctx.font = 'bold 24px Arial';
-      ctx.fillText('GENDER:', 650, 290);
-      ctx.font = '32px Arial';
-      ctx.fillText(formData.gender || '---', 650, 335);
+        ctx.fillStyle = '#3b82f6';
+        ctx.font = 'bold 32px Arial';
+        ctx.fillText(role || '---', 340, 290);
 
-      ctx.font = 'bold 24px Arial';
-      ctx.fillText('ID NUMBER:', 320, 400);
-      ctx.font = 'bold 42px monospace';
-      ctx.fillStyle = '#1a73e8';
-      ctx.fillText(formData.idNumber || '---', 320, 460);
-      
-      // Footer/Address
-      ctx.fillStyle = '#64748b';
-      ctx.font = '20px Arial';
-      ctx.fillText(formData.address || '', 60, 580);
+        ctx.fillStyle = '#64748b';
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText('ID NUMBER', 340, 380);
+        ctx.font = 'bold 36px monospace';
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(idNumber || '---', 340, 425);
+
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('DOB', 340, 480);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '28px Arial';
+        ctx.fillText(dob || '---', 340, 520);
+
+        ctx.font = 'bold 20px Arial';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('GENDER', 600, 480);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '28px Arial';
+        ctx.fillText(gender || '---', 600, 520);
+
+        ctx.fillStyle = 'white';
+        ctx.font = '18px Arial';
+        ctx.fillText(address || '', 40, 615);
+      }
+    } else if (selectedTemplate === 'classic') {
+       // Classic Business Layout
+       ctx.fillStyle = '#1a365d';
+       ctx.fillRect(0, 0, canvas.width, 140);
+       
+       ctx.fillStyle = 'white';
+       ctx.font = 'bold 44px Georgia, serif';
+       ctx.textAlign = 'center';
+       ctx.fillText(organization || 'CORPORATION', canvas.width/2, 65);
+       ctx.font = '24px Arial';
+       ctx.fillText('STAFF IDENTIFICATION', canvas.width/2, 105);
+       ctx.textAlign = 'left';
+
+       if (photo) {
+         const img = new Image();
+         img.onload = () => {
+           ctx.drawImage(img, canvas.width - 280, 180, 220, 280);
+           ctx.strokeStyle = '#1a365d';
+           ctx.lineWidth = 5;
+           ctx.strokeRect(canvas.width - 280, 180, 220, 280);
+           renderClassicText();
+         };
+         img.src = photo;
+       } else {
+         renderClassicText();
+       }
+
+       function renderClassicText() {
+          if (!ctx) return;
+          ctx.fillStyle = '#1a365d';
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText('NAME:', 60, 240);
+          ctx.font = 'bold 44px Arial';
+          ctx.fillText(name || '---', 60, 290);
+
+          ctx.font = 'bold 24px Arial';
+          ctx.fillText('POSITION:', 60, 370);
+          ctx.font = '36px Arial';
+          ctx.fillText(role || '---', 60, 420);
+
+          ctx.font = 'bold 20px Arial';
+          ctx.fillText('ID NO:', 60, 490);
+          ctx.font = 'bold 36px Arial';
+          ctx.fillText(idNumber || '---', 60, 540);
+       }
+    } else {
+       // Minimalist
+       ctx.fillStyle = '#f8fafc';
+       ctx.fillRect(0, 0, canvas.width, canvas.height);
+       
+       ctx.strokeStyle = '#e2e8f0';
+       ctx.lineWidth = 2;
+       ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+
+       if (photo) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 80, 80, 160, 160);
+          renderMinimalText();
+        };
+        img.src = photo;
+       } else {
+         renderMinimalText();
+       }
+
+       function renderMinimalText() {
+          if (!ctx) return;
+          ctx.fillStyle = '#000000';
+          ctx.font = 'bold 64px Arial';
+          ctx.fillText(name || '---', 280, 140);
+          ctx.font = '32px Arial';
+          ctx.fillStyle = '#64748b';
+          ctx.fillText(role || '---', 280, 190);
+          
+          ctx.font = 'bold 24px Arial';
+          ctx.fillStyle = '#000';
+          ctx.fillText('ORGANIZATION', 80, 320);
+          ctx.font = '36px Arial';
+          ctx.fillText(organization || '---', 80, 370);
+       }
     }
   };
 
@@ -134,10 +235,13 @@ export default function IDMakerPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/utils" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <CreditCard size={32} className={styles.icon} />
           <div>
             <h1>ID Card Maker</h1>
-            <p>Generate identity cards instantly using professional templates.</p>
+            <p>Generate professional-grade identity cards for your staff or organization.</p>
           </div>
         </div>
       </header>
@@ -145,7 +249,7 @@ export default function IDMakerPage() {
       <div className={styles.makerGrid}>
         <div className={styles.controlsCol}>
           <Card className={styles.card}>
-            <h3>1. Choose Template</h3>
+            <h4 className="text-xs font-black uppercase tracking-widest text-secondary mb-4">1. Choice of Design</h4>
             <div className={styles.templateGrid}>
               {TEMPLATES.map(t => (
                 <button 
@@ -159,39 +263,56 @@ export default function IDMakerPage() {
               ))}
             </div>
 
-            <h3>2. Personal Details</h3>
+            <h4 className="text-xs font-black uppercase tracking-widest text-secondary mb-4">2. Identity Details</h4>
             <div className={styles.inputGroup}>
               <label>Full Name</label>
-              <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Enter Name" />
+              <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Enter Full Name" />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className={styles.inputGroup}>
+                <label>Organization</label>
+                <input name="organization" value={formData.organization} onChange={handleInputChange} placeholder="Company Name" />
+              </div>
+              <div className={styles.inputGroup}>
+                <label>Job Title / Role</label>
+                <input name="role" value={formData.role} onChange={handleInputChange} placeholder="Role" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className={styles.inputGroup}>
                 <label>Date of Birth</label>
                 <input name="dob" value={formData.dob} onChange={handleInputChange} placeholder="DD/MM/YYYY" />
               </div>
               <div className={styles.inputGroup}>
                 <label>Gender</label>
-                <input name="gender" value={formData.gender} onChange={handleInputChange} placeholder="M / F" />
+                <input name="gender" value={formData.gender} onChange={handleInputChange} placeholder="Male / Female" />
               </div>
             </div>
+
             <div className={styles.inputGroup}>
               <label>ID Number</label>
-              <input name="idNumber" value={formData.idNumber} onChange={handleInputChange} placeholder="0000 0000 0000" />
-            </div>
-            <div className={styles.inputGroup}>
-              <label>Address Info</label>
-              <input name="address" value={formData.address} onChange={handleInputChange} placeholder="City, State, Country" />
+              <input name="idNumber" value={formData.idNumber} onChange={handleInputChange} placeholder="Unique ID Number" />
             </div>
 
-            <h3>3. Upload Photo</h3>
+            <div className={styles.inputGroup}>
+              <label>Address Info</label>
+              <input name="address" value={formData.address} onChange={handleInputChange} placeholder="Full Address" />
+            </div>
+
+            <h4 className="text-xs font-black uppercase tracking-widest text-secondary mb-4">3. Profile Portrait</h4>
             <div className={styles.photoUpload} onClick={() => document.getElementById('id-photo-input')?.click()}>
               <input type="file" id="id-photo-input" hidden accept="image/*" onChange={onPhotoChange} />
               {photo ? (
-                <img src={photo} alt="Preview" />
+                <div className="flex flex-col items-center">
+                   <img src={photo} alt="Preview" />
+                   <p className="text-[10px] text-primary font-bold">Portrait Loaded Successfully</p>
+                </div>
               ) : (
-                <div style={{ padding: '20px' }}>
-                  <ImageIcon size={32} color="var(--accent-primary)" style={{ marginBottom: 8 }} />
-                  <p style={{ fontSize: '0.8rem' }}>Click to select photo</p>
+                <div style={{ padding: '10px' }}>
+                  <ImageIcon size={32} color="var(--accent-primary)" className="mx-auto mb-2 opacity-50" />
+                  <p className="text-xs text-secondary">Click to upload photo</p>
                 </div>
               )}
             </div>
@@ -200,16 +321,16 @@ export default function IDMakerPage() {
               variant="primary" 
               size="lg" 
               fullWidth 
-              style={{ marginTop: 32 }}
+              style={{ marginTop: 24, padding: '1.25rem', borderRadius: '1rem' }}
               onClick={() => {
                 const link = document.createElement('a');
-                link.download = 'id_card.png';
+                link.download = `ID_${formData.name.replace(/\s+/g, '_')}.png`;
                 link.href = canvasRef.current?.toDataURL() || '';
                 link.click();
               }}
             >
               <Download size={18} />
-              Download ID Card
+              Export HD Identity Card
             </Button>
           </Card>
         </div>
@@ -218,9 +339,10 @@ export default function IDMakerPage() {
           <div className={styles.idCardPreview}>
             <canvas ref={canvasRef} className={styles.idCardCanvas} />
           </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-            Live Preview (High Resolution 1011x638)
-          </p>
+          <div className="flex flex-col items-center gap-1">
+             <p className="text-primary font-black text-[10px] uppercase tracking-tighter">Live Industrial Preview</p>
+             <p className="text-muted text-[10px]">High Res (1011 x 638) • CR-80 Standard • 300 DPI</p>
+          </div>
         </div>
       </div>
     </div>

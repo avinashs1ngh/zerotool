@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Code, Terminal, Brackets, Regex, FileDiff, Type, ArrowLeft } from 'lucide-react';
+import { Code, Terminal, Brackets, Regex, FileDiff, Type, ArrowLeft, Binary, Link2 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
@@ -21,6 +21,20 @@ const DEV_TOOLS = [
     icon: <Regex size={28} />,
     href: '/tools/dev/regex',
     color: 'var(--accent-cyan)'
+  },
+  {
+    title: 'Base64 Converter',
+    desc: 'Encode or decode text to and from Base64 format.',
+    icon: <Binary size={28} />,
+    href: '/tools/dev/base64',
+    color: 'var(--accent-primary)'
+  },
+  {
+    title: 'URL Encoder',
+    desc: 'Safely encode or decode URL parameters and strings.',
+    icon: <Link2 size={28} />,
+    href: '/tools/dev/url',
+    color: 'var(--accent-green)'
   },
   {
     title: 'Markdown Preview',
@@ -82,27 +96,6 @@ export default function DevCategoryPage() {
             </Link>
           </motion.div>
         ))}
-      </section>
-
-      <section className={styles.howTo}>
-        <h2>Developer Productivity</h2>
-        <div className={styles.steps}>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>1</div>
-            <h4>Live Updates</h4>
-            <p>Every keystroke triggers a re-validation. See your mistakes as you make them.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>2</div>
-            <h4>Secure Localhost</h4>
-            <p>None of your code or sensitive JSON ever leaves your machine.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>3</div>
-            <h4>Powerful Engine</h4>
-            <p>Built-in syntax highlighting and formatting logic used by top IDEs.</p>
-          </div>
-        </div>
       </section>
 
       <footer className={styles.pageFooter}>

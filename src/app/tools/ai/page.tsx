@@ -2,41 +2,35 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft } from 'lucide-react';
+import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft, Image as ImageIcon, Wand2, Maximize2 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
 
 const AI_TOOLS = [
   {
-    title: 'Prompt Studio',
-    desc: 'Craft and test complex prompts with live previews and AI assistance.',
-    icon: <Sparkles size={28} />,
-    href: '/tools/ai/prompt',
-    color: 'var(--accent-green)'
+    title: 'Generate',
+    desc: 'Generate stunning images from text using Nano Banana & Google Imagen 4.0.',
+    icon: <ImageIcon size={28} />,
+    href: '/tools/ai/generate',
+    color: '#ff2d55'
   },
   {
-    title: 'Text Summarizer',
-    desc: 'Condense long articles and documents into concise bullet points.',
-    icon: <FileText size={28} />,
-    href: '/tools/ai/summary',
-    color: 'var(--accent-cyan)'
+    title: 'Edit image',
+    desc: 'Manipulate and edit images with AI-powered prompt enhancement.',
+    icon: <Wand2 size={28} />,
+    href: '/tools/ai/edit',
+    color: '#5856d6'
   },
   {
-    title: 'Code Explainer',
-    desc: 'Let AI explain logic and syntax for snippets in over 50 languages.',
-    icon: <BrainCircuit size={28} />,
-    href: '/tools/ai/code-explainer',
-    color: 'var(--accent-purple)'
-  },
-  {
-    title: 'AI Settings',
-    desc: 'Configure multiple AI providers and storage keys locally.',
-    icon: <Settings size={28} />,
-    href: '/tools/ai/prompt?tab=settings',
-    color: 'var(--text-secondary)'
+    title: 'Enhance',
+    desc: 'Upscale your images to 2K/4K resolution with Google\'s elite preview models.',
+    icon: <Maximize2 size={28} />,
+    href: '/tools/ai/upscale',
+    color: '#007aff'
   }
 ];
+
 
 export default function AICategoryPage() {
   return (
@@ -83,31 +77,6 @@ export default function AICategoryPage() {
           </motion.div>
         ))}
       </section>
-
-      <section className={styles.howTo}>
-        <h2>Multi-Provider Flexibility</h2>
-        <div className={styles.steps}>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>1</div>
-            <h4>Secure Key Storage</h4>
-            <p>Paste your API keys once. They are encrypted and saved locally in IndexedDB.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>2</div>
-            <h4>Swap Providers</h4>
-            <p>Toggle between OpenAI, Anthropic, or native Browser models instantly.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>3</div>
-            <h4>Global Access</h4>
-            <p>Access AI capabilities across every tool in the suite seamlessly.</p>
-          </div>
-        </div>
-      </section>
-
-      <footer className={styles.pageFooter}>
-        <p>AI processing utilizes <strong>Cross-Origin Proxies</strong> on your local runtime to maintain security.</p>
-      </footer>
     </div>
   );
 }

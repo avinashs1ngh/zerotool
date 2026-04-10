@@ -101,27 +101,6 @@ export default function UtilsCategoryPage() {
         ))}
       </section>
 
-      <section className={styles.howTo}>
-        <h2>Daily Productivity</h2>
-        <div className={styles.steps}>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>1</div>
-            <h4>Quick Access</h4>
-            <p>Save ZeroTool to your home screen with PWA setup for instant availability.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>2</div>
-            <h4>Secure Generation</h4>
-            <p>All hashes, passwords, and identifiers are generated locally via Web Crypto API.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>3</div>
-            <h4>Smart Export</h4>
-            <p>Download or copy your results with a single click to any application.</p>
-          </div>
-        </div>
-      </section>
-
       <footer className={styles.pageFooter}>
         <p>Utilities are optimized to be <strong>Lightweight</strong> and <strong>Energy Efficient</strong>.</p>
       </footer>

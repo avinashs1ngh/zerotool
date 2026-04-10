@@ -12,19 +12,15 @@
   gap: var(--spacing-xs);
   padding-bottom: var(--spacing-sm);
   border-bottom: 1px solid var(--glass-border);
-  margin-bottom: 1rem;
+
 }
 
 .titleArea {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 
   .backBtn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
     height: 38px;
     border-radius: 50%;
     color: var(--text-secondary);

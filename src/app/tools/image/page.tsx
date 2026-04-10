@@ -19,13 +19,6 @@ const IMAGE_TOOLS = [
     color: 'var(--accent-primary)'
   },
   {
-    title: 'BG Remover',
-    desc: 'Remove image backgrounds locally using AI.',
-    icon: <Eraser size={28} />,
-    href: '/tools/image/bg-remover',
-    color: 'var(--accent-cyan)'
-  },
-  {
     title: 'Format Converter',
     desc: 'Convert images between PNG, JPG, WebP, and AVIF.',
     icon: <Repeat size={28} />,
@@ -101,26 +94,6 @@ export default function ImageCategoryPage() {
         ))}
       </section>
 
-      <section className={styles.howTo}>
-        <h2>Local Processing is Key</h2>
-        <div className={styles.steps}>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>1</div>
-            <h4>Canvas Rendering</h4>
-            <p>We use the high-performance Canvas API to process pixels instantly.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>2</div>
-            <h4>Zero Latency</h4>
-            <p>No waiting for uploads or server response. Your GPU does the work.</p>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepNum}>3</div>
-            <h4>Maximum Quality</h4>
-            <p>Fine-tune every setting before exporting your final image.</p>
-          </div>
-        </div>
-      </section>
 
       <footer className={styles.pageFooter}>
         <p>Image processing is powered by <strong>WebWorker</strong> threads to prevent any UI freezing.</p>

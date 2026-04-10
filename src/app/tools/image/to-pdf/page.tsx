@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import Link from 'next/link';
 import { 
   FileText, Upload, Download, Trash2, 
-  Plus, ImageIcon, FileCheck 
+  Plus, ImageIcon, FileCheck, ArrowLeft
 } from 'lucide-react';
 import styles from './ImageToPDF.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -59,8 +60,11 @@ export default function ImageToPDFPage() {
 
   return (
     <div className={styles.container}>
-       <header className={styles.header}>
+      <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/image" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <FileText size={32} className={styles.icon} />
           <div>
             <h1>Image to PDF</h1>

@@ -5,9 +5,10 @@ import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile, toBlobURL } from '@ffmpeg/util';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import Link from 'next/link';
 import { 
   Video, Upload, Download, Trash2, 
-  AlertTriangle, CheckCircle2, Terminal, Info 
+  AlertTriangle, CheckCircle2, Terminal, Info, ArrowLeft 
 } from 'lucide-react';
 import styles from './VideoCompressor.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -100,6 +101,9 @@ export default function VideoCompressorPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.titleArea}>
+          <Link href="/tools/utils" className={styles.backBtn}>
+            <ArrowLeft size={20} />
+          </Link>
           <Video size={32} className={styles.icon} />
           <div>
             <h1>Video Compressor</h1>
