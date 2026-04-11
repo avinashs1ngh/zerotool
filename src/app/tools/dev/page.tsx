@@ -9,6 +9,13 @@ import styles from '../Category.module.scss';
 
 const DEV_TOOLS = [
   {
+    title: 'AI Web Architect',
+    desc: 'Generate interactive web components and UI elements using Qwen-Web-Dev.',
+    icon: <Code size={28} />,
+    href: '/tools/dev/ai-web',
+    color: 'var(--accent-primary)'
+  },
+  {
     title: 'JSON Formatter',
     desc: 'Pretty-print or minify JSON data with instant validation.',
     icon: <Brackets size={28} />,

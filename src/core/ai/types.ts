@@ -1,4 +1,4 @@
-export type AIProviderId = 'window.ai' | 'openai' | 'anthropic' | 'nanobanana';
+export type AIProviderId = 'window.ai' | 'nanobanana' | 'qwen';
 
 export interface AIProviderDetails {
   id: AIProviderId;

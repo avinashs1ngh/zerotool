@@ -62,7 +62,8 @@ export function CommandPalette() {
             </Command.Group>
 
             <Command.Group heading="AI Tools">
-              <Command.Item onSelect={() => onSelect('/tools/ai/prompt')}>Prompt Studio</Command.Item>
+              <Command.Item onSelect={() => onSelect('/tools/ai/chat')}>AI Chat</Command.Item>
+              <Command.Item onSelect={() => onSelect('/tools/ai/slides')}>Slide Maker</Command.Item>
             </Command.Group>
 
             <Command.Group heading="Utilities">

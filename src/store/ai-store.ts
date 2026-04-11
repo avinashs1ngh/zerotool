@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AIProviderId, AIProvider } from '../core/ai/types';
-import { WindowAIProvider, OpenAIProvider, AnthropicProvider, NanoBananaProvider } from '../core/ai/providers';
+import { WindowAIProvider, NanoBananaProvider, QwenProvider } from '../core/ai/providers';
 import { getSetting, setSetting } from '../core/db';
 
 interface AIStore {
@@ -15,9 +15,8 @@ interface AIStore {
 
 const instances = {
   'window.ai': new WindowAIProvider(),
-  'openai': new OpenAIProvider(),
-  'anthropic': new AnthropicProvider(),
-  'nanobanana': new NanoBananaProvider()
+  'nanobanana': new NanoBananaProvider(),
+  'qwen': new QwenProvider()
 };
 
 export const useAIStore = create<AIStore>((set, get) => ({
@@ -39,8 +38,8 @@ export const useAIStore = create<AIStore>((set, get) => ({
     
     // Check if the saved one is still available
     let bestId = saved;
-    if (bestId && instances[bestId]) {
-      if (!instances[bestId].details.isAvailable) bestId = null;
+    if (bestId && instances[bestId as keyof typeof instances]) {
+      if (!instances[bestId as keyof typeof instances].details.isAvailable) bestId = null;
     }
 
     if (!bestId) {
@@ -49,12 +48,10 @@ export const useAIStore = create<AIStore>((set, get) => ({
       if (firstAvailable) bestId = firstAvailable.id as AIProviderId;
     }
 
-    set({ activeProviderId: bestId, isInitializing: false });
+    set({ activeProviderId: bestId as AIProviderId, isInitializing: false });
   },
 
   setActiveProvider: async (id: AIProviderId) => {
-    // Optionally check availability again? 
-    // To keep it simple, we trust the UI to only allow selecting available or showing warnings.
     await setSetting('active_ai_provider', id);
     set({ activeProviderId: id });
   },

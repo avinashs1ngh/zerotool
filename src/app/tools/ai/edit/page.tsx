@@ -153,9 +153,8 @@ export default function AIImageEditPage() {
             </motion.div>
           </div>
           <div>
-            <h1>Edit image</h1>
-            <p className="hidden sm:block text-secondary text-sm">Transform reality with natural language.</p>
-          </div>
+            <h1>Image Edit</h1>
+           </div>
         </div>
       </motion.header>
 

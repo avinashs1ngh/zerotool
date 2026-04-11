@@ -1,0 +1,274 @@
+@use "@/styles/variables.scss" as vars;
+
+.videoPage {
+  min-height: 100vh;
+  background: var(--bg-deep, #050505);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 0.75rem 1.5rem;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  @media (max-width: 600px) { padding: 0.6rem 1rem; }
+
+  .headerTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .backBtn {
+    @include vars.flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    transition: all 0.2s;
+    &:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+  }
+
+  .headerBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(255, 45, 85, 0.1);
+    border: 1px solid rgba(255, 45, 85, 0.2);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    color: #ff2d55;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    @media (max-width: 600px) { span { display: none; } }
+  }
+}
+
+.container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 1.5rem;
+  flex: 1;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+.formSection {
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 1rem;
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  textarea {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #fff;
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+    min-height: 120px;
+    resize: none;
+    outline: none;
+    transition: all 0.3s;
+    &:focus { border-color: #ff2d55; background: rgba(0, 0, 0, 0.4); }
+  }
+}
+
+.controlRow {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    gap: 0.75rem;
+
+    @media (max-width: 400px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.selectWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .optionSelect {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #999;
+    padding: 0.6rem 2rem 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { border-color: rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); }
+  }
+
+  .selectIcon {
+    position: absolute;
+    right: 0.8rem;
+    color: #555;
+    pointer-events: none;
+  }
+}
+
+.generateBtn {
+  background: #ff2d55;
+  color: #fff;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 45, 85, 0.2);
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3); }
+  &:disabled { background: #1a1a1a; color: #444; box-shadow: none; cursor: not-allowed; transform: none; }
+  
+  span { font-size: 0.85rem; }
+}
+
+.previewSection {
+  background: rgba(20, 20, 20, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+}
+
+.videoPreview {
+  flex: 1;
+  width: 100%;
+  @include vars.flex-center;
+  background: #000;
+  position: relative;
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.loaderArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+
+  .cinematicLoader {
+    position: relative;
+    @include vars.flex-center;
+    width: 60px;
+    height: 60px;
+
+    .filmStrip {
+      position: absolute;
+      inset: 0;
+      border: 3px dashed rgba(255, 45, 85, 0.3);
+      border-radius: 50%;
+      animation: spin 6s linear infinite;
+    }
+
+    .pulse {
+      color: #ff2d55;
+      animation: pulse 1.5s infinite;
+      filter: drop-shadow(0 0 10px rgba(255, 45, 85, 0.5));
+    }
+  }
+
+  p { font-size: 0.9rem; font-weight: 700; color: #eee; text-transform: uppercase; letter-spacing: 0.1em; }
+  .subText { font-size: 0.75rem; color: #555; font-weight: 500; }
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #333;
+
+  .placeholderIcon { opacity: 0.05; }
+  p { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+}
+
+.actions {
+  padding: 1rem;
+  background: rgba(10, 10, 10, 0.5);
+  display: flex;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  .actionBtn {
+    flex: 1;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 800;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #fff;
+
+    &:hover { background: rgba(255, 255, 255, 0.1); }
+    &.secondary { background: transparent; color: #555; &:hover { color: #fff; } }
+  }
+}
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse { 0% { scale: 1; opacity: 0.6; } 50% { scale: 1.1; opacity: 1; } 100% { scale: 1; opacity: 0.6; } }

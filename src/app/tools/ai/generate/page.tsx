@@ -174,7 +174,7 @@ export default function AIImageGeneratePage() {
             exit={{ opacity: 0, y: -20, x: '-50%' }}
           >
             <Sparkles size={18} />
-            Art Manifested Successfully!
+           Generated Successfully!
           </motion.div>
         )}
       </AnimatePresence>
@@ -187,8 +187,7 @@ export default function AIImageGeneratePage() {
           <ImageIcon size={32} className={styles.icon} color="#ff2d55" />
           <div>
             <h1>Generate</h1>
-            <p className="hidden sm:block text-secondary text-sm">Professional AI image generation studio.</p>
-          </div>
+           </div>
         </div>
       </motion.header>
 
