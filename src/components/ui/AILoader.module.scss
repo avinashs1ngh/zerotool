@@ -29,32 +29,6 @@
   50% { opacity: 0.8; transform: scale(1.1); }
 }
 
-// 1. Presentation Loader (Data Scan)
-.presentation {
-  --loader-color-rgb: 255, 149, 0;
-  
-  .beam {
-    position: absolute;
-    width: 60px;
-    height: 2px;
-    background: #ff9500;
-    box-shadow: 0 0 15px #ff9500;
-    animation: scan-vertical 1.5s infinite ease-in-out;
-  }
-
-  .icon {
-    color: #ff9500;
-    z-index: 2;
-  }
-}
-
-@keyframes scan-vertical {
-  0% { transform: translateY(-30px); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(30px); opacity: 0; }
-}
-
 // 2. Video Loader (Film Strip)
 .video {
   --loader-color-rgb: 255, 45, 85;

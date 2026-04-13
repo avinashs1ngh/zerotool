@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Brain, Film, Cpu, Layers } from 'lucide-react';
+import { Sparkles, Brain, Film, Cpu } from 'lucide-react';
 import styles from './AILoader.module.scss';
 
-export type LoaderVariant = 'presentation' | 'video' | 'architecture' | 'thinking';
+export type LoaderVariant = 'video' | 'architecture' | 'thinking';
 
 interface AILoaderProps {
   variant: LoaderVariant;
@@ -20,7 +20,6 @@ export const AILoader: React.FC<AILoaderProps> = ({
 }) => {
   const getIcon = () => {
     switch (variant) {
-      case 'presentation': return <Layers size={32} className={styles.icon} />;
       case 'video': return <Film size={32} className={styles.icon} />;
       case 'architecture': return <Cpu size={32} className={styles.icon} />;
       case 'thinking': return <Brain size={32} className={styles.icon} />;
@@ -33,7 +32,6 @@ export const AILoader: React.FC<AILoaderProps> = ({
       <div className={`${styles.visualWrapper} ${styles[variant]}`}>
         <div className={styles.glow} />
         
-        {variant === 'presentation' && <div className={styles.beam} />}
         {variant === 'video' && <div className={styles.strip} />}
         {variant === 'architecture' && <div className={styles.grid} />}
         {variant === 'thinking' && (

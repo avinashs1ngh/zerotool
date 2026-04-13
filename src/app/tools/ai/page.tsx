@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft, Image as ImageIcon, Wand2, Maximize2, Video, Terminal, Presentation } from 'lucide-react';
+import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft, Image as ImageIcon, Wand2, Maximize2, Video, Terminal } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
@@ -14,13 +14,6 @@ const AI_TOOLS = [
     icon: <MessageSquareText size={28} />,
     href: '/tools/ai/chat',
     color: '#007aff'
-  },
-  {
-    title: 'Slide Maker',
-    desc: 'Generate professional slides with AI-researched content and images.',
-    icon: <Presentation size={28} />,
-    href: '/tools/ai/slides',
-    color: '#ff9500'
   },
   {
     title: 'Create Video',

@@ -36,7 +36,12 @@ export default function BriaGeneratePage() {
 
       const data = await response.json();
       if (data.result) {
-        setResult(data.result);
+        // Wrap image_url in proxy to avoid browser referer blocks
+        const proxiedResult = {
+          ...data.result,
+          image_url: `/api/ai/bria-img?url=${encodeURIComponent(data.result.image_url)}`
+        };
+        setResult(proxiedResult);
       } else {
         throw new Error(data.error?.message || 'Generation failed');
       }
@@ -158,7 +163,9 @@ export default function BriaGeneratePage() {
                     <div className={styles.promptDetails}>
                        <h4>Structured Intelligence</h4>
                        <div className={styles.structuredPrompt}>
-                          {JSON.parse(result.structured_prompt).short_description}
+                          {typeof result.structured_prompt === 'string' 
+                            ? JSON.parse(result.structured_prompt).short_description 
+                            : result.structured_prompt.short_description}
                        </div>
                     </div>
                   )}

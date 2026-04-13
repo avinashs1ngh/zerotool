@@ -36,7 +36,8 @@ export default function BriaPromptPage() {
 
       const data = await response.json();
       if (data.result?.structured_prompt) {
-        setResult(JSON.parse(data.result.structured_prompt));
+        const raw = data.result.structured_prompt;
+        setResult(typeof raw === 'string' ? JSON.parse(raw) : raw);
       } else {
         throw new Error(data.error?.message || 'Processing failed');
       }

@@ -64,7 +64,7 @@ export default function Home() {
           >
             <Cpu size={32} className={styles.icon} />
             <h3>AI Native Core</h3>
-            <p>Integrated with high-performance LLMs specifically tuned for document architecture, automated slides, and cinematic video synthesis directly from your prompts.</p>
+            <p>Integrated with high-performance LLMs specifically tuned for document architecture and cinematic video synthesis directly from your prompts.</p>
           </motion.div>
 
           <motion.div 
