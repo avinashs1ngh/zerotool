@@ -55,7 +55,7 @@ export default function Home() {
           >
             <Zap size={32} className={styles.icon} />
             <h3>Hyper-Performance</h3>
-            <p>Built with Next.js 15 and Rust-powered toolsets. Experience near-instant results for video compression, document scanning, and AI generation without network latency.</p>
+            <p>Built with Next.js 15 and Rust-powered toolsets. Experience near-instant results for document scanning and AI generation without network latency.</p>
           </motion.div>
 
           <motion.div 

@@ -4,20 +4,13 @@ import React from 'react';
 import Link from 'next/link';
 import { 
   TerminalSquare, Fingerprint, KeyRound, QrCode, 
-  Palette, Hash, Video, CreditCard, Minimize, ArrowLeft
+  Palette, Hash, CreditCard, Minimize, ArrowLeft
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
 
 const UTILS_TOOLS = [
-  {
-    title: 'Video Compress',
-    desc: 'Secure local video compression with zero uploads.',
-    icon: <Video size={28} />,
-    href: '/tools/utils/video',
-    color: 'var(--accent-primary)'
-  },
   {
     title: 'ID Card Maker',
     desc: 'Generate professional ID cards from templates.',
