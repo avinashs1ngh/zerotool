@@ -12,6 +12,13 @@ import styles from '../Category.module.scss';
 
 const PDF_TOOLS = [
   {
+    title: 'AI Document Scanner',
+    desc: 'Advanced precision scanner with AI-powered perspective unwarping.',
+    icon: <Sparkles size={28} />,
+    href: '/tools/pdf/ai-scan',
+    color: '#ebba34', // Gold/AI color
+  },
+  {
     title: 'Camera Scanner',
     desc: 'Multi-page camera scanner with auto-capture & PDF export.',
     icon: <Camera size={28} />,

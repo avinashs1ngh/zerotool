@@ -36,7 +36,7 @@ const FILTERS = [
   { id: 'stamp',    label: 'Stamp',    icon: '🔵', css: 'grayscale(1) contrast(3) brightness(1.15)' },
 ];
 
-type EditTab = 'filters' | 'transform';
+type EditTab = 'filters' | 'transform' | 'perspective';
 
 // ─────────────────────────────────────────────────────────────
 // Component
