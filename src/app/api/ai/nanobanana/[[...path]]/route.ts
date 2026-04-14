@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
+
 const BASE_URL = 'https://nanobanana.aikit.club/v1';
 
 export async function GET(

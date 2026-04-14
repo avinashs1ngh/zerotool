@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
+
 const BASE_URL = 'https://bria.aikit.club/v2';
 
 export async function POST(

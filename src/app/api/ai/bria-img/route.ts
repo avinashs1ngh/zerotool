@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-/**
- * Simple image proxy to bypass browser Referer header issues
- * with signed CloudFront URLs from Bria AI responses.
- * Usage: /api/ai/bria-img?url=<encoded_image_url>
- */
+export const runtime = 'edge';
+
+
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get('url');
   if (!url) {
