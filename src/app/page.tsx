@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className={styles.home}>
+    <div className={`${styles.home} full-bleed`}>
       {/* Cinematic Hero */}
       <section className={styles.hero}>
         <div className={styles.gradientOverlay} />

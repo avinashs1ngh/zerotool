@@ -273,7 +273,7 @@ export default function CamScannerClient() {
   // ── CAMERA VIEW ────────────────────────────────────────────
   if (view === 'camera') {
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} full-bleed`}>
         {/* Flash */}
         {showFlash && <div className={styles.flashOverlay} />}
 
@@ -412,7 +412,7 @@ export default function CamScannerClient() {
 
   // ── REVIEW VIEW ────────────────────────────────────────────
   return (
-    <div className={styles.reviewView}>
+    <div className={`${styles.reviewView} full-bleed`}>
       {/* Header */}
       <div className={styles.reviewHeader}>
         <button className={styles.reviewBackBtn} onClick={() => setView('camera')}>
