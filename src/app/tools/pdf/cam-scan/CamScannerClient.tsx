@@ -3,9 +3,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
-  Camera, Zap, RotateCcw, X, Check, 
-  Trash2, ChevronLeft, Download, ImageIcon, FlipHorizontal,
-  Sparkles, Layers, ArrowUp, ArrowDown, Crop, Maximize, ArrowLeft
+  Camera, Clock, RotateCw, RotateCcw, X, Check, 
+  Trash2, ChevronLeft, Download, ImageIcon, RefreshCw,
+  Sparkles, Layers, ArrowUp, ArrowDown, Crop, Maximize, ArrowLeft,
+  FileDown, Type, Save
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PDFDocument } from 'pdf-lib';
@@ -27,10 +28,12 @@ interface ScannedPage {
 }
 
 const FILTERS = [
-  { id: 'original', label: 'Original', css: '' },
-  { id: 'grayscale', label: 'Grayscale', css: 'grayscale(100%)' },
-  { id: 'magic', label: 'Magic', css: 'contrast(1.4) saturate(1.3) brightness(1.05)' },
-  { id: 'bw', label: 'B&W', css: 'contrast(200%) grayscale(100%)' },
+  { id: 'original', label: 'Original', icon: '🖼️', css: '' },
+  { id: 'magic', label: 'Magic', icon: '✨', css: 'contrast(1.4) saturate(1.3) brightness(1.05)' },
+  { id: 'bw', label: 'B&W', icon: '📄', css: 'contrast(200%) grayscale(100%)' },
+  { id: 'grayscale', label: 'Gray', icon: '⬛', css: 'grayscale(100%)' },
+  { id: 'vivid', label: 'Vivid', icon: '🎨', css: 'saturate(2) contrast(1.2)' },
+  { id: 'stamp', label: 'Stamp', icon: '🔵', css: 'grayscale(1) contrast(3) brightness(1.15)' },
 ];
 
 export default function CamScannerClient() {
@@ -58,6 +61,9 @@ export default function CamScannerClient() {
 
   // ─── Export States ───────────────────────────────────────────
   const [isExporting, setIsExporting] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [exportName, setExportName] = useState(`scan_${new Date().toLocaleDateString().replace(/\//g, '-')}`);
+  const [exportFormat, setExportFormat] = useState<'pdf' | 'zip'>('pdf');
 
   // ══════════════════════════════════════════════
   // Camera Engine
@@ -239,18 +245,28 @@ export default function CamScannerClient() {
       // Apply Filter (Pixel manipulation)
       if (filter !== 'original') {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i], g = data[i+1], b = data[i+2];
+        const d = imageData.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const r = d[i], g = d[i + 1], b = d[i + 2];
           const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+
           if (filter === 'grayscale') {
-            data[i] = data[i+1] = data[i+2] = gray;
+            d[i] = d[i + 1] = d[i + 2] = gray;
           } else if (filter === 'bw') {
-            const bw = gray > 128 ? 255 : 0;
-            data[i] = data[i+1] = data[i+2] = bw;
+            const bw = gray > 160 ? 255 : gray > 80 ? gray * 0.5 : 0;
+            d[i] = d[i + 1] = d[i + 2] = bw;
           } else if (filter === 'magic') {
-            data[i] = Math.min(255, r * 1.2);
-            data[i+1] = Math.min(255, g * 1.2);
+            d[i]     = Math.min(255, r * 1.1 + 15);
+            d[i + 1] = Math.min(255, g * 1.1 + 15);
+            d[i + 2] = Math.min(255, b * 1.0);
+          } else if (filter === 'vivid') {
+            const avg = (r + g + b) / 3;
+            d[i]     = Math.min(255, avg + (r - avg) * 2);
+            d[i + 1] = Math.min(255, avg + (g - avg) * 2);
+            d[i + 2] = Math.min(255, avg + (b - avg) * 2);
+          } else if (filter === 'stamp') {
+            const bw2 = gray > 140 ? 255 : 0;
+            d[i] = d[i + 1] = d[i + 2] = bw2;
           }
         }
         ctx.putImageData(imageData, 0, 0);
@@ -286,42 +302,42 @@ export default function CamScannerClient() {
   // ══════════════════════════════════════════════
   // Export Functions
   // ══════════════════════════════════════════════
-  const downloadAsPdf = async () => {
+  const handleExport = async () => {
     if (pages.length === 0) return;
     setIsExporting(true);
     try {
-      const pdfDoc = await PDFDocument.create();
-      for (const page of pages) {
-        const imgBytes = await fetch(page.edited).then(res => res.arrayBuffer());
-        const pdfImg = await pdfDoc.embedJpg(imgBytes);
-        const pdfPage = pdfDoc.addPage([pdfImg.width, pdfImg.height]);
-        pdfPage.drawImage(pdfImg, { x: 0, y: 0, width: pdfImg.width, height: pdfImg.height });
+      if (exportFormat === 'pdf') {
+        const pdfDoc = await PDFDocument.create();
+        for (const page of pages) {
+          const imgBytes = await fetch(page.edited).then(res => res.arrayBuffer());
+          const pdfImg = await pdfDoc.embedJpg(imgBytes);
+          const pdfPage = pdfDoc.addPage([pdfImg.width, pdfImg.height]);
+          pdfPage.drawImage(pdfImg, { x: 0, y: 0, width: pdfImg.width, height: pdfImg.height });
+        }
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${exportName || 'scan'}.pdf`;
+        link.click();
+      } else {
+        const zip = new JSZip();
+        for (let i = 0; i < pages.length; i++) {
+          const base64 = pages[i].edited.split(',')[1];
+          zip.file(`scan_page_${i + 1}.jpg`, base64, { base64: true });
+        }
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${exportName || 'scanned_images'}.zip`;
+        link.click();
       }
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `scan_${Date.now()}.pdf`;
-      link.click();
+      setShowDownloadModal(false);
+    } catch (err) {
+      console.error('Export error:', err);
     } finally {
       setIsExporting(false);
     }
-  };
-
-  const downloadAsZip = async () => {
-    if (pages.length === 0) return;
-    setIsExporting(true);
-    const zip = new JSZip();
-    for (let i = 0; i < pages.length; i++) {
-      const base64 = pages[i].edited.split(',')[1];
-      zip.file(`scan_page_${i + 1}.jpg`, base64, { base64: true });
-    }
-    const blob = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `scanned_images.zip`;
-    link.click();
-    setIsExporting(false);
   };
 
   // ══════════════════════════════════════════════
@@ -371,13 +387,22 @@ export default function CamScannerClient() {
             </>
           )}
         </div>
+        <Link href="/tools/pdf" className={styles.backBtnFixed}>
+          <ArrowLeft size={20} />
+        </Link>
+
         <div className={styles.topBar}>
-          <Link href="/tools/pdf" className={styles.backBtn}>
-            <ArrowLeft size={20} />
-          </Link>
-          <div className={styles.pageCount}>{pages.length} Pages</div>
-          <button className={`${styles.iconBtn} ${isAutoCapture ? styles.active : ''}`} onClick={() => setIsAutoCapture(!isAutoCapture)}><Zap size={20} /></button>
+          <div style={{ flex: 1 }} />
+          <div className={styles.pageCountMinimal}>{pages.length} Pages</div>
+          <button 
+            className={`${styles.iconBtn} ${isAutoCapture ? styles.active : ''}`} 
+            onClick={() => setIsAutoCapture(!isAutoCapture)}
+            title="Auto Capture"
+          >
+            <Clock size={20} />
+          </button>
         </div>
+
         <div className={styles.bottomControls}>
           <div className={styles.thumbnailStrip}>
             {pages.map((p, i) => (
@@ -388,7 +413,9 @@ export default function CamScannerClient() {
             ))}
           </div>
           <div className={styles.captureRow}>
-            <button className={styles.iconBtn} onClick={() => setIsFrontCamera(!isFrontCamera)}><FlipHorizontal size={24} /></button>
+            <button className={styles.iconBtn} onClick={() => setIsFrontCamera(!isFrontCamera)}>
+              <RotateCw size={24} />
+            </button>
             <button 
               className={`${styles.captureBtn} ${(isCapturing || !!error) ? styles.disabled : ''}`} 
               onClick={capturePhoto}
@@ -396,7 +423,9 @@ export default function CamScannerClient() {
             >
               <div className={styles.inner} />
             </button>
-            <button className={styles.doneBtn} onClick={() => setView('review')}>Done <Check size={20} /></button>
+            <button className={styles.checkmarkBtn} onClick={() => setView('review')}>
+              <Check size={28} />
+            </button>
           </div>
         </div>
       </div>
@@ -441,12 +470,81 @@ export default function CamScannerClient() {
               </div>
             ))}
           </div>
-          <div style={{ marginTop: 40, display: 'flex', gap: 12, flexDirection: 'column' }}>
-            <Button variant="primary" size="lg" fullWidth onClick={downloadAsPdf} isLoading={isExporting}><Download size={18} /> Save as PDF</Button>
-            <Button variant="secondary" size="lg" fullWidth onClick={downloadAsZip} isLoading={isExporting}><ImageIcon size={18} /> Save as Images (ZIP)</Button>
+          <div className={styles.actions}>
+            <Button variant="primary" size="lg" fullWidth onClick={() => setShowDownloadModal(true)}>
+              <Download size={18} /> Download All
+            </Button>
+            <Button variant="ghost" fullWidth onClick={() => setView('camera')}>
+              <Camera size={18} /> Add More Pages
+            </Button>
           </div>
         </>
       )}
+
+      {/* ── Download Modal ── */}
+      <AnimatePresence>
+        {showDownloadModal && (
+          <div className={styles.modalOverlay} onClick={() => setShowDownloadModal(false)}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className={styles.modal} 
+              onClick={e => e.stopPropagation()}
+            >
+              <div className={styles.modalHeader}>
+                <h3>Export Document</h3>
+                <button className={styles.iconBtn} onClick={() => setShowDownloadModal(false)}><X size={18} /></button>
+              </div>
+              
+              <div className={styles.modalBody}>
+                <div className={styles.inputField}>
+                  <label>File Name</label>
+                  <div className={styles.inputWrap}>
+                    <Type size={16} className={styles.inputIcon} />
+                    <input 
+                      type="text" 
+                      value={exportName} 
+                      onChange={e => setExportName(e.target.value)}
+                      placeholder="Enter filename..."
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.inputField}>
+                  <label>Save As</label>
+                  <div className={styles.formatToggle}>
+                    <button 
+                      className={exportFormat === 'pdf' ? styles.active : ''} 
+                      onClick={() => setExportFormat('pdf')}
+                    >
+                      PDF Document
+                    </button>
+                    <button 
+                      className={exportFormat === 'zip' ? styles.active : ''} 
+                      onClick={() => setExportFormat('zip')}
+                    >
+                      Images (ZIP)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter}>
+                <Button 
+                  variant="primary" 
+                  fullWidth 
+                  size="lg" 
+                  onClick={handleExport} 
+                  isLoading={isExporting}
+                >
+                  <Save size={18} /> Finish & Download
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {editingIndex !== null && (

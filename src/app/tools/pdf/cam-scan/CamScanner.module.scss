@@ -151,6 +151,29 @@
 // ─────────────────────────────────────────────────────────────
 // Top Bar Controls
 // ─────────────────────────────────────────────────────────────
+.backBtnFixed {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.2s;
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateX(-4px);
+  }
+}
+
 .backBtn {
   @include vars.flex-center;
   width: 44px;
@@ -195,6 +218,13 @@
   font-weight: 700;
   font-size: 0.9rem;
   box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+.pageCountMinimal {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin-right: 12px;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -303,6 +333,21 @@
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
+.checkmarkBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s;
+
+  &:active { transform: scale(0.9); }
+}
+
 // ─────────────────────────────────────────────────────────────
 // Review Grid
 // ─────────────────────────────────────────────────────────────
@@ -310,7 +355,7 @@
   flex: 1;
   background: var(--bg-primary);
   color: var(--text-primary);
-  padding: 32px 24px;
+  padding: 24px 16px;
   overflow-y: auto;
 }
 
@@ -318,9 +363,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
   
-  h2 { font-size: 1.5rem; font-weight: 800; margin: 0; }
+  h2 { font-size: 1.25rem; font-weight: 800; margin: 0; }
 }
 
 .grid {
@@ -454,6 +499,122 @@
     background: rgba(26, 115, 232, 0.05);
     color: var(--accent-primary);
   }
+}
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Modal Styles
+// ─────────────────────────────────────────────────────────────
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+  box-shadow: var(--shadow-2xl);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h3 { font-size: 1.2rem; font-weight: 800; margin: 0; }
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.inputField {
+  label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+}
+
+.inputWrap {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: var(--accent-primary);
+  }
+
+  .inputIcon {
+    color: var(--text-muted);
+    margin-right: 12px;
+  }
+
+  input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 0;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+  }
+}
+
+.formatToggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--bg-tertiary);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+
+  button {
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+
+    &.active {
+      background: var(--bg-primary);
+      color: var(--accent-primary);
+      box-shadow: var(--shadow-sm);
+    }
+  }
+}
+
+.modalFooter {
+  padding-top: 8px;
 }
 
 // ─────────────────────────────────────────────────────────────

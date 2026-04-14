@@ -19,13 +19,6 @@ const PDF_TOOLS = [
     color: 'var(--accent-primary)'
   },
   {
-    title: 'Doc Scanner',
-    desc: 'Apply pro scan filters to document photos (JPG/PNG).',
-    icon: <Sparkles size={28} />,
-    href: '/tools/pdf/scan',
-    color: 'var(--accent-cyan)'
-  },
-  {
     title: 'PDF Editor',
     desc: 'Add text, signatures, and images to your PDFs.',
     icon: <PenTool size={28} />,
