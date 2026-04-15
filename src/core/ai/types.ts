@@ -1,4 +1,4 @@
-export type AIProviderId = 'window.ai' | 'nanobanana' | 'qwen';
+export type AIProviderId = 'window.ai' | 'qwen';
 
 export interface AIProviderDetails {
   id: AIProviderId;
@@ -13,31 +13,6 @@ export interface AIGenerationOptions {
   temperature?: number;
   maxTokens?: number;
   topK?: number;
-}
-
-export interface NanoBananaModel {
-  id: string;
-  object: string;
-  created: number;
-  owned_by: string;
-}
-
-export interface NanoBananaImageOptions {
-  prompt: string;
-  model?: string;
-  n?: number;
-  size?: string;
-  quality?: 'auto' | 'standard' | 'low' | 'medium' | 'high' | 'hd';
-  response_format?: 'url' | 'b64_json';
-}
-
-export interface NanoBananaImageResponse {
-  created: number;
-  data: Array<{
-    url?: string;
-    b64_json?: string;
-    revised_prompt?: string;
-  }>;
 }
 
 export interface AIProvider {

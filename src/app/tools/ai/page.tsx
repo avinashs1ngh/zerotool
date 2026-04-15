@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft, Image as ImageIcon, Wand2, Maximize2, Video, Terminal } from 'lucide-react';
+import { Bot, Sparkles, BrainCircuit, MessageSquareText, FileText, Settings, ArrowLeft, Video, Terminal } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { motion } from 'framer-motion';
 import styles from '../Category.module.scss';
@@ -21,27 +21,6 @@ const AI_TOOLS = [
     icon: <Video size={28} />,
     href: '/tools/ai/video',
     color: '#ff2d55'
-  },
-  {
-    title: 'Create Image',
-    desc: 'Generate stunning images from text using Nano Banana & Imagen 4.0.',
-    icon: <ImageIcon size={28} />,
-    href: '/tools/ai/generate',
-    color: '#ff9500'
-  },
-  {
-    title: 'Edit Image',
-    desc: 'Manipulate and edit images with AI-powered prompt enhancement.',
-    icon: <Wand2 size={28} />,
-    href: '/tools/ai/edit',
-    color: '#34c759'
-  },
-  {
-    title: 'Enhance Image',
-    desc: 'Upscale your images to 2K/4K resolution with elite preview models.',
-    icon: <Maximize2 size={28} />,
-    href: '/tools/ai/upscale',
-    color: '#af52de'
   }
 ];
 

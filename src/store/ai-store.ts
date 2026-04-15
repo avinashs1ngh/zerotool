@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AIProviderId, AIProvider } from '../core/ai/types';
-import { WindowAIProvider, NanoBananaProvider, QwenProvider } from '../core/ai/providers';
+import { WindowAIProvider, QwenProvider } from '../core/ai/providers';
 import { getSetting, setSetting } from '../core/db';
 
 interface AIStore {
@@ -15,7 +15,6 @@ interface AIStore {
 
 const instances = {
   'window.ai': new WindowAIProvider(),
-  'nanobanana': new NanoBananaProvider(),
   'qwen': new QwenProvider()
 };
 

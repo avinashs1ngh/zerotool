@@ -1,4 +1,4 @@
-# 🌌 Nano Banana AI Image Studio
+# 🌌 ZeroTool
 ### *The Ultimate Visual-First AI Playground & Utility Suite*
 
 **Zero-Server Privacy. Professional Performance. Premium Aesthetics.**
@@ -7,7 +7,7 @@
 
 ## ✨ Overview
 
-**Nano Banana AI Image Studio** (powered by ZeroTool) is a comprehensive, production-grade creative engine built for 2026. Designed with a **Glass 2.0** aesthetic, it combines cutting-edge Generative AI with a suite of essential file and developer utilities — all running **100% locally in your browser**.
+**ZeroTool** is a comprehensive, production-grade creative engine built for 2026. Designed with a **Glass 2.0** aesthetic, it combines cutting-edge Generative AI with a suite of essential file and developer utilities — all running **100% locally in your browser**.
 
 Your files never leave your machine. No servers, no tracking, just pure computational power delivered via WebAssembly and advanced client-side processing.
 
@@ -101,5 +101,5 @@ We believe your data belongs to you.
 ---
 
 <p align="center">
-  Built with ❤️ by the Nano Banana Team.
+  Built with ❤️ by Avinash Singh.
 </p>
