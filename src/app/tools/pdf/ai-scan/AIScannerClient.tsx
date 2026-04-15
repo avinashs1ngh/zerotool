@@ -5,9 +5,9 @@ import Link from 'next/link';
 import {
   Camera, Clock, X, Check,
   Trash2, Download, RefreshCw,
-  Sparkles, ArrowUp, Crop, ArrowLeft,
+  ArrowUp, Crop, ArrowLeft,
   Type, Save, ScanLine, FlipHorizontal2, ZoomIn,
-  Grid3x3, Sliders, RotateCcw, Move
+  Grid3x3, Sliders, RotateCcw, Move, PenLine
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { PDFDocument } from 'pdf-lib';
@@ -15,7 +15,10 @@ import JSZip from 'jszip';
 import Cropper, { Area } from 'react-easy-crop';
 import styles from './AIScanner.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useOpenCV } from '@/hooks/useOpenCV';
+
+// ─────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────
 interface Point { x: number; y: number; }
 
 interface ScannedPage {
@@ -44,21 +47,112 @@ const DEFAULT_POINTS: Point[] = [
 
 type EditTab = 'warp' | 'filters' | 'transform';
 
-const MAG_ZOOM   = 3;   
-const MAG_SIZE   = 120;  
-const MAG_OFFSET = 80;   
+const MAG_SIZE = 130; // diameter px
+const MAG_ZOOM = 3.5; // zoom factor
+const MAG_GAP  = 16;  // px gap between magnifier bottom and handle center
+
+// ─────────────────────────────────────────────────────────────
+// Pure-canvas perspective warp (no OpenCV dependency)
+// Uses inverse bilinear interpolation for correct mapping
+// ─────────────────────────────────────────────────────────────
+function canvasPerspectiveWarp(
+  img: HTMLImageElement,
+  // corners in IMAGE NATURAL PIXEL space (TL, TR, BR, BL)
+  corners: [Point, Point, Point, Point]
+): string {
+  const [tl, tr, br, bl] = corners;
+
+  const topW   = Math.hypot(tr.x - tl.x, tr.y - tl.y);
+  const botW   = Math.hypot(br.x - bl.x, br.y - bl.y);
+  const leftH  = Math.hypot(bl.x - tl.x, bl.y - tl.y);
+  const rightH = Math.hypot(br.x - tr.x, br.y - tr.y);
+  const outW   = Math.round(Math.max(topW, botW));
+  const outH   = Math.round(Math.max(leftH, rightH));
+
+  if (outW < 1 || outH < 1) return img.src;
+
+  // Read source pixels
+  const srcCanvas = document.createElement('canvas');
+  srcCanvas.width  = img.naturalWidth;
+  srcCanvas.height = img.naturalHeight;
+  srcCanvas.getContext('2d')!.drawImage(img, 0, 0);
+  const srcCtx  = srcCanvas.getContext('2d')!;
+  const srcData = srcCtx.getImageData(0, 0, srcCanvas.width, srcCanvas.height);
+
+  const dstCanvas = document.createElement('canvas');
+  dstCanvas.width  = outW;
+  dstCanvas.height = outH;
+  const dstCtx  = dstCanvas.getContext('2d')!;
+  const dstData = dstCtx.createImageData(outW, outH);
+  const d       = dstData.data;
+  const s       = srcData.data;
+  const sw      = srcCanvas.width;
+  const sh      = srcCanvas.height;
+
+  // For each destination pixel, compute source coordinate via bilinear interp
+  for (let py = 0; py < outH; py++) {
+    const v = py / (outH - 1 || 1);
+    for (let px = 0; px < outW; px++) {
+      const u = px / (outW - 1 || 1);
+
+      // Bilinear blend of the 4 source corners
+      const srcX = (1 - u) * (1 - v) * tl.x
+                 + u       * (1 - v) * tr.x
+                 + u       * v       * br.x
+                 + (1 - u) * v       * bl.x;
+      const srcY = (1 - u) * (1 - v) * tl.y
+                 + u       * (1 - v) * tr.y
+                 + u       * v       * br.y
+                 + (1 - u) * v       * bl.y;
+
+      const sx = Math.round(srcX);
+      const sy = Math.round(srcY);
+      if (sx < 0 || sy < 0 || sx >= sw || sy >= sh) continue;
+
+      const si = (sy * sw + sx) * 4;
+      const di = (py * outW + px) * 4;
+      d[di]     = s[si];
+      d[di + 1] = s[si + 1];
+      d[di + 2] = s[si + 2];
+      d[di + 3] = s[si + 3];
+    }
+  }
+
+  dstCtx.putImageData(dstData, 0, 0);
+  return dstCanvas.toDataURL('image/jpeg', 0.95);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Compute the rendered image rect inside a container
+// when using object-fit: contain
+// ─────────────────────────────────────────────────────────────
+function getContainRect(
+  cW: number, cH: number, iW: number, iH: number
+): { x: number; y: number; w: number; h: number } {
+  const cAspect = cW / cH;
+  const iAspect = iW / iH;
+  let w: number, h: number;
+  if (iAspect > cAspect) { w = cW;          h = cW / iAspect; }
+  else                   { h = cH;          w = cH * iAspect; }
+  return { x: (cW - w) / 2, y: (cH - h) / 2, w, h };
+}
+
+// ─────────────────────────────────────────────────────────────
+// Component
+// ─────────────────────────────────────────────────────────────
 export default function AIScannerClient() {
-  const cvStatus = useOpenCV();
   const [view, setView]               = useState<'camera' | 'review'>('camera');
   const [pages, setPages]             = useState<ScannedPage[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
   const [showFlash, setShowFlash]     = useState(false);
   const [error, setError]             = useState<string | null>(null);
+
   const [isFrontCamera, setIsFrontCamera] = useState(false);
   const [isAutoCapture, setIsAutoCapture] = useState(false);
   const [countdown, setCountdown]         = useState<number | null>(null);
   const videoRef  = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
   const [editingIndex, setEditingIndex]           = useState<number | null>(null);
   const [editTab, setEditTab]                     = useState<EditTab>('warp');
   const [editFilter, setEditFilter]               = useState('original');
@@ -67,15 +161,21 @@ export default function AIScannerClient() {
   const [zoom, setZoom]                           = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [aspect, setAspect]                       = useState<number | undefined>(undefined);
-  const [points, setPoints]       = useState<Point[]>(DEFAULT_POINTS);
+
+  const [points, setPoints]           = useState<Point[]>(DEFAULT_POINTS);
   const [activePoint, setActivePoint] = useState<number | null>(null);
-  const [handlePixels, setHandlePixels] = useState<{ x: number; y: number } | null>(null);
+  // px position of the active handle within the container
+  const [handlePx, setHandlePx] = useState<{ x: number; y: number } | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const perspImgRef  = useRef<HTMLImageElement>(null);
+
   const [isExporting, setIsExporting]             = useState(false);
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [exportName, setExportName]               = useState(`ai_scan_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}`);
   const [exportFormat, setExportFormat]           = useState<'pdf' | 'zip'>('pdf');
+
+  // ── Camera ─────────────────────────────────────────────────
   const startCamera = useCallback(async () => {
     setError(null);
     try {
@@ -84,7 +184,6 @@ export default function AIScannerClient() {
         throw new Error('MEDIA_DEVICES_UNSUPPORTED');
       }
       streamRef.current?.getTracks().forEach(t => t.stop());
-
       let stream: MediaStream;
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -93,22 +192,20 @@ export default function AIScannerClient() {
         });
       } catch {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: isFrontCamera ? 'user' : 'environment' },
-          audio: false,
+          video: { facingMode: isFrontCamera ? 'user' : 'environment' }, audio: false,
         });
       }
-
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
         await videoRef.current.play().catch(() => {});
       }
     } catch (err: any) {
-      if (err.message === 'INSECURE_CONTEXT')          setError('Camera requires HTTPS or localhost.');
+      if      (err.message === 'INSECURE_CONTEXT')          setError('Camera requires HTTPS or localhost.');
       else if (err.message === 'MEDIA_DEVICES_UNSUPPORTED') setError('Your browser does not support camera access.');
-      else if (err.name === 'NotAllowedError')          setError('Camera permission denied. Allow access and refresh.');
-      else if (err.name === 'NotFoundError')            setError('No camera found on this device.');
-      else                                              setError('Could not access camera. Please check permissions.');
+      else if (err.name  === 'NotAllowedError')             setError('Camera permission denied. Allow access and refresh.');
+      else if (err.name  === 'NotFoundError')               setError('No camera found on this device.');
+      else                                                  setError('Could not access camera. Please check permissions.');
     }
   }, [isFrontCamera]);
 
@@ -122,8 +219,7 @@ export default function AIScannerClient() {
     const video = videoRef.current;
     if (!video.videoWidth) return;
     const canvas = document.createElement('canvas');
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d')!;
     if (isFrontCamera) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
     ctx.drawImage(video, 0, 0);
@@ -147,50 +243,12 @@ export default function AIScannerClient() {
     return () => clearInterval(timer);
   }, [isAutoCapture, view, capturePhoto, isCapturing]);
 
-  const warpImage = useCallback(async (srcUrl: string, corners: Point[]): Promise<string> => {
-    if (typeof window === 'undefined' || !window.cv) return srcUrl;
-    const cv = window.cv;
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const src      = cv.imread(img);
-        const dst      = new cv.Mat();
-        const W = img.width, H = img.height;
-
-        const px = corners.map(p => ({ x: (p.x / 100) * W, y: (p.y / 100) * H }));
-        const topW    = Math.hypot(px[1].x - px[0].x, px[1].y - px[0].y);
-        const botW    = Math.hypot(px[2].x - px[3].x, px[2].y - px[3].y);
-        const leftH   = Math.hypot(px[3].x - px[0].x, px[3].y - px[0].y);
-        const rightH  = Math.hypot(px[2].x - px[1].x, px[2].y - px[1].y);
-        const outW    = Math.round(Math.max(topW, botW));
-        const outH    = Math.round(Math.max(leftH, rightH));
-
-        const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
-          px[0].x, px[0].y, px[1].x, px[1].y, px[2].x, px[2].y, px[3].x, px[3].y,
-        ]);
-        const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
-          0, 0, outW, 0, outW, outH, 0, outH,
-        ]);
-
-        const M     = cv.getPerspectiveTransform(srcPts, dstPts);
-        const dsize = new cv.Size(outW, outH);
-        cv.warpPerspective(src, dst, M, dsize, cv.INTER_LINEAR, cv.BORDER_CONSTANT, new cv.Scalar());
-
-        const out = document.createElement('canvas');
-        cv.imshow(out, dst);
-        src.delete(); dst.delete(); srcPts.delete(); dstPts.delete(); M.delete();
-        resolve(out.toDataURL('image/jpeg', 0.95));
-      };
-      img.src = srcUrl;
-    });
-  }, []);
-
-  const processImage = useCallback(async (
+  // ── Process image (rotation + crop + filter) ───────────────
+  const processImage = useCallback((
     srcUrl: string, px: Area | null, rot: number, flt: string
   ): Promise<string> => {
     return new Promise((res, rej) => {
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.onload = () => {
         const isRot = rot === 90 || rot === 270;
         const tc = document.createElement('canvas');
@@ -201,16 +259,16 @@ export default function AIScannerClient() {
         tc2.rotate((rot * Math.PI) / 180);
         tc2.drawImage(img, -img.width / 2, -img.height / 2);
 
-        const canvas = document.createElement('canvas');
-        const ctx    = canvas.getContext('2d')!;
-        canvas.width  = px ? px.width  : tc.width;
-        canvas.height = px ? px.height : tc.height;
+        const c   = document.createElement('canvas');
+        const ctx = c.getContext('2d')!;
+        c.width  = px ? px.width  : tc.width;
+        c.height = px ? px.height : tc.height;
         if (px) ctx.drawImage(tc, px.x, px.y, px.width, px.height, 0, 0, px.width, px.height);
         else    ctx.drawImage(tc, 0, 0);
 
         if (flt !== 'original') {
-          const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const d  = id.data;
+          const id = ctx.getImageData(0, 0, c.width, c.height);
+          const d = id.data;
           for (let i = 0; i < d.length; i += 4) {
             const r = d[i], g = d[i+1], b = d[i+2];
             const gray = 0.299*r + 0.587*g + 0.114*b;
@@ -222,13 +280,14 @@ export default function AIScannerClient() {
           }
           ctx.putImageData(id, 0, 0);
         }
-        res(canvas.toDataURL('image/jpeg', 0.95));
+        res(c.toDataURL('image/jpeg', 0.95));
       };
       img.onerror = rej;
       img.src = srcUrl;
     });
   }, []);
 
+  // ── Open editor ────────────────────────────────────────────
   const openEditor = (idx: number) => {
     const page = pages[idx];
     setEditFilter(page.filter);
@@ -239,23 +298,50 @@ export default function AIScannerClient() {
     setCroppedAreaPixels(null);
     setAspect(undefined);
     setActivePoint(null);
-    setHandlePixels(null);
+    setHandlePx(null);
     setPoints(page.perspectivePoints ?? DEFAULT_POINTS);
     setEditingIndex(idx);
   };
 
+  // ── Save ───────────────────────────────────────────────────
   const saveEdit = async () => {
-    if (editingIndex === null) return;
+    if (editingIndex === null || !containerRef.current || !perspImgRef.current) return;
     setIsExporting(true);
     try {
       const page = pages[editingIndex];
-      const warpedUrl = await warpImage(page.original, points);
+      const cRect = containerRef.current.getBoundingClientRect();
+      const cW = cRect.width, cH = cRect.height;
+      const iW = perspImgRef.current.naturalWidth;
+      const iH = perspImgRef.current.naturalHeight;
+
+      // ── Step 1: Warp ──────────────────────────────────────
+      // Convert points (% of container) → natural image pixel coords
+      const renderedRect = getContainRect(cW, cH, iW, iH);
+      const scaleX = iW / renderedRect.w;
+      const scaleY = iH / renderedRect.h;
+
+      const imgPxCorners = points.map(p => ({
+        x: Math.max(0, Math.min(iW, ((p.x / 100) * cW - renderedRect.x) * scaleX)),
+        y: Math.max(0, Math.min(iH, ((p.y / 100) * cH - renderedRect.y) * scaleY)),
+      })) as [Point, Point, Point, Point];
+
+      // Load the source image
+      const srcImg = await new Promise<HTMLImageElement>((res, rej) => {
+        const i = new Image();
+        i.onload = () => res(i);
+        i.onerror = rej;
+        i.src = page.original;
+      });
+
+      const warpedUrl = canvasPerspectiveWarp(srcImg, imgPxCorners);
+
+      // ── Step 2: Process (rotate + crop + filter) ──────────
       const cropPx = editTab === 'transform' ? croppedAreaPixels : null;
       const url    = await processImage(warpedUrl, cropPx, editRotate, editFilter);
 
       setPages(prev => prev.map((p, i) =>
         i === editingIndex
-          ? { ...p, filter: editFilter, rotation: editRotate, edited: url, crop: cropPx ?? undefined, perspectivePoints: points }
+          ? { ...p, filter: editFilter, rotation: editRotate, edited: url, crop: cropPx ?? undefined, perspectivePoints: [...points] }
           : p
       ));
       setEditingIndex(null);
@@ -266,12 +352,15 @@ export default function AIScannerClient() {
     }
   };
 
-  const getContainerPoint = useCallback((clientX: number, clientY: number) => {
+  // ── Drag handlers ──────────────────────────────────────────
+  const getContainerCoords = useCallback((clientX: number, clientY: number) => {
     if (!containerRef.current) return null;
     const rect = containerRef.current.getBoundingClientRect();
     return {
-      x: Math.max(0, Math.min(100, ((clientX - rect.left)  / rect.width)  * 100)),
-      y: Math.max(0, Math.min(100, ((clientY - rect.top)   / rect.height) * 100)),
+      pct: {
+        x: Math.max(0, Math.min(100, ((clientX - rect.left)  / rect.width)  * 100)),
+        y: Math.max(0, Math.min(100, ((clientY - rect.top)   / rect.height) * 100)),
+      },
       px: clientX - rect.left,
       py: clientY - rect.top,
     };
@@ -279,16 +368,81 @@ export default function AIScannerClient() {
 
   const handleDragMove = useCallback((clientX: number, clientY: number) => {
     if (activePoint === null) return;
-    const pt = getContainerPoint(clientX, clientY);
+    const pt = getContainerCoords(clientX, clientY);
     if (!pt) return;
-    setPoints(prev => prev.map((p, i) => i === activePoint ? { x: pt.x, y: pt.y } : p));
-    setHandlePixels({ x: pt.px, y: pt.py });
-  }, [activePoint, getContainerPoint]);
+    setPoints(prev => prev.map((p, i) => i === activePoint ? pt.pct : p));
+    setHandlePx({ x: pt.px, y: pt.py });
+  }, [activePoint, getContainerCoords]);
 
-  const onMouseMove  = useCallback((e: React.MouseEvent)  => handleDragMove(e.clientX, e.clientY), [handleDragMove]);
-  const onTouchMove  = useCallback((e: React.TouchEvent)  => { e.preventDefault(); handleDragMove(e.touches[0].clientX, e.touches[0].clientY); }, [handleDragMove]);
-  const onDragEnd    = useCallback(() => { setActivePoint(null); setHandlePixels(null); }, []);
+  const onMouseMove = useCallback((e: React.MouseEvent)  => handleDragMove(e.clientX, e.clientY), [handleDragMove]);
+  const onTouchMove = useCallback((e: React.TouchEvent)  => { e.preventDefault(); handleDragMove(e.touches[0].clientX, e.touches[0].clientY); }, [handleDragMove]);
+  const onDragEnd   = useCallback(() => { setActivePoint(null); setHandlePx(null); }, []);
 
+  // ── Magnifier ──────────────────────────────────────────────
+  // Key insight: the source image is displayed with object-fit:contain inside the container.
+  // There will be letterbox/pillarbox padding. We need to account for that when computing
+  // what region to show in the magnifier.
+  const renderMagnifier = () => {
+    if (activePoint === null || !handlePx || !containerRef.current || !perspImgRef.current || editingIndex === null) return null;
+
+    const cEl   = containerRef.current;
+    const iEl   = perspImgRef.current;
+    const cRect = cEl.getBoundingClientRect();
+    const cW    = cRect.width;
+    const cH    = cRect.height;
+
+    // Where the image is actually rendered inside the container
+    const rendered = getContainRect(cW, cH, iEl.naturalWidth, iEl.naturalHeight);
+
+    const hx = handlePx.x; // px within container div
+    const hy = handlePx.y;
+
+    // Position magnifier above the handle, centered on it horizontally
+    const magLeft = Math.max(0, Math.min(cW - MAG_SIZE, hx - MAG_SIZE / 2));
+    const magTop  = Math.max(0, Math.min(cH - MAG_SIZE, hy - MAG_SIZE - MAG_GAP));
+
+    // The handle is at (hx, hy) in container px.
+    // We need to show the image zoomed at that exact point.
+    // Inside the magnifier circle (MAG_SIZE × MAG_SIZE), we render the image at MAG_ZOOM scale.
+    // The displayed image in the magnifier has size: rendered.w * MAG_ZOOM × rendered.h * MAG_ZOOM.
+    // We need to pan so that the point at (hx, hy) lands at the center of the magnifier.
+    //
+    // In the magnifier, the img element covers rendered.w*MAG_ZOOM × rendered.h*MAG_ZOOM px.
+    // The letterbox offset in the container is (rendered.x, rendered.y).
+    // Handle position within the rendered image: (hx - rendered.x, hy - rendered.y)
+    // In zoomed space: zoom those by MAG_ZOOM
+    // Offset to center: subtract half of MAG_SIZE
+
+    const zoomedX = (hx - rendered.x) * MAG_ZOOM;
+    const zoomedY = (hy - rendered.y) * MAG_ZOOM;
+
+    const imgOffX = MAG_SIZE / 2 - zoomedX;
+    const imgOffY = MAG_SIZE / 2 - zoomedY;
+
+    return (
+      <div
+        className={styles.magnifier}
+        style={{ left: magLeft, top: magTop, width: MAG_SIZE, height: MAG_SIZE }}
+      >
+        <img
+          src={pages[editingIndex].original}
+          style={{
+            position: 'absolute',
+            width:     rendered.w * MAG_ZOOM,
+            height:    rendered.h * MAG_ZOOM,
+            left:      imgOffX,
+            top:       imgOffY,
+            maxWidth:  'none',
+            pointerEvents: 'none',
+          }}
+          alt="zoom"
+          draggable={false}
+        />
+      </div>
+    );
+  };
+
+  // ── Export ─────────────────────────────────────────────────
   const handleExport = async () => {
     if (!pages.length) return;
     setIsExporting(true);
@@ -302,21 +456,22 @@ export default function AIScannerClient() {
           p.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
         }
         const blob = new Blob([await pdfDoc.save() as any], { type: 'application/pdf' });
-        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${exportName || 'scan'}.pdf` });
-        a.click();
+        Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${exportName || 'scan'}.pdf` }).click();
       } else {
         const zip = new JSZip();
         pages.forEach((p, i) => zip.file(`page_${i+1}.jpg`, p.edited.split(',')[1], { base64: true }));
         const blob = await zip.generateAsync({ type: 'blob' });
-        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${exportName || 'scan'}.zip` });
-        a.click();
+        Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `${exportName || 'scan'}.zip` }).click();
       }
       setShowDownloadModal(false);
     } catch (e) { console.error(e); }
     finally { setIsExporting(false); }
   };
 
-   if (view === 'camera') {
+  // ──────────────────────────────────────────────────────────
+  // CAMERA VIEW
+  // ──────────────────────────────────────────────────────────
+  if (view === 'camera') {
     return (
       <div className={`${styles.container} full-bleed`}>
         {showFlash && <div className={styles.flashOverlay} />}
@@ -367,9 +522,7 @@ export default function AIScannerClient() {
 
         <div className={styles.bottomControls}>
           <div className={styles.thumbnailStrip}>
-            {pages.length === 0 && (
-              <div className={styles.thumbEmpty}><ScanLine size={20} /></div>
-            )}
+            {pages.length === 0 && <div className={styles.thumbEmpty}><ScanLine size={20} /></div>}
             {pages.map((p, i) => (
               <div key={p.id} className={styles.thumbItem}>
                 <img src={p.edited} alt={`Page ${i+1}`} />
@@ -399,7 +552,10 @@ export default function AIScannerClient() {
     );
   }
 
-   return (
+  // ──────────────────────────────────────────────────────────
+  // REVIEW VIEW
+  // ──────────────────────────────────────────────────────────
+  return (
     <div className={`${styles.reviewView} full-bleed`}>
       <div className={styles.reviewHeader}>
         <button className={styles.reviewBackBtn} onClick={() => setView('camera')}><ArrowLeft size={18} /></button>
@@ -424,7 +580,9 @@ export default function AIScannerClient() {
                   <div className={styles.cardActions}>
                     <span className={styles.pageLabel}>P {i+1}</span>
                     <div className={styles.cardBtns}>
-                      <button className={styles.smallBtn} onClick={() => openEditor(i)} title="Edit"><Sparkles size={13} /></button>
+                      <button className={styles.smallBtn} onClick={() => openEditor(i)} title="Edit">
+                        <PenLine size={13} />
+                      </button>
                       <button className={styles.smallBtn}
                         onClick={() => { if (i > 0) { const n=[...pages]; [n[i-1],n[i]]=[n[i],n[i-1]]; setPages(n); } }}
                         disabled={i === 0} title="Move up"><ArrowUp size={13} /></button>
@@ -449,6 +607,7 @@ export default function AIScannerClient() {
         )}
       </div>
 
+      {/* Download Modal */}
       <AnimatePresence>
         {showDownloadModal && (
           <motion.div className={styles.modalOverlay}
@@ -476,12 +635,10 @@ export default function AIScannerClient() {
                   <span className={styles.inputLabel}>Save As</span>
                   <div className={styles.formatToggle}>
                     <button className={`${styles.formatOption} ${exportFormat === 'pdf' ? styles.active : ''}`} onClick={() => setExportFormat('pdf')}>
-                      <span className={styles.formatExt}>PDF</span>
-                      <span className={styles.formatDesc}>Single file</span>
+                      <span className={styles.formatExt}>PDF</span><span className={styles.formatDesc}>Single file</span>
                     </button>
                     <button className={`${styles.formatOption} ${exportFormat === 'zip' ? styles.active : ''}`} onClick={() => setExportFormat('zip')}>
-                      <span className={styles.formatExt}>ZIP</span>
-                      <span className={styles.formatDesc}>Images folder</span>
+                      <span className={styles.formatExt}>ZIP</span><span className={styles.formatDesc}>Images folder</span>
                     </button>
                   </div>
                 </div>
@@ -495,6 +652,7 @@ export default function AIScannerClient() {
         )}
       </AnimatePresence>
 
+      {/* Edit Overlay */}
       <AnimatePresence>
         {editingIndex !== null && (
           <motion.div className={styles.editOverlay}
@@ -526,101 +684,53 @@ export default function AIScannerClient() {
                       draggable={false}
                     />
 
-                     <svg className={styles.perspectiveSVG} viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <polygon
-                        points={points.map(p => `${p.x},${p.y}`).join(' ')}
-                        className={styles.perspectivePolygon}
-                      />
+                    {/* SVG polygon + edge lines in container % space */}
+                    <svg className={styles.perspectiveSVG} viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <polygon points={points.map(p => `${p.x},${p.y}`).join(' ')} className={styles.perspectivePolygon} />
                       {[0,1,2,3].map(i => {
                         const a = points[i], b = points[(i+1)%4];
                         return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} className={styles.perspectiveLine} />;
                       })}
                     </svg>
 
-                     {points.map((p, i) => (
-                      <div
-                        key={i}
+                    {/* Corner handles */}
+                    {points.map((p, i) => (
+                      <div key={i}
                         className={`${styles.perspectiveHandle} ${activePoint === i ? styles.handleActive : ''}`}
                         style={{ left: `${p.x}%`, top: `${p.y}%` }}
-                        onMouseDown={e => { e.preventDefault(); setActivePoint(i); setHandlePixels(null); }}
-                        onTouchStart={e => { e.preventDefault(); setActivePoint(i); setHandlePixels(null); }}
+                        onMouseDown={e => { e.preventDefault(); setActivePoint(i); setHandlePx(null); }}
+                        onTouchStart={e => { e.preventDefault(); setActivePoint(i); setHandlePx(null); }}
                       >
                         <span className={styles.handleCornerIcon}>{['↖','↗','↘','↙'][i]}</span>
                       </div>
                     ))}
 
-                    {activePoint !== null && handlePixels && containerRef.current && (() => {
-                      const rect    = containerRef.current.getBoundingClientRect();
-                      const hx      = handlePixels.x;
-                      const hy      = handlePixels.y;
-                      const magLeft = hx - MAG_SIZE / 2;
-                      const magTop  = hy - MAG_SIZE - MAG_OFFSET + 10; 
-
-                      const clampedLeft = Math.max(0, Math.min(rect.width  - MAG_SIZE, magLeft));
-                      const clampedTop  = Math.max(0, Math.min(rect.height - MAG_SIZE, magTop));
-
-                      const imgOffX = -(hx * MAG_ZOOM) + MAG_SIZE / 2;
-                      const imgOffY = -(hy * MAG_ZOOM) + MAG_SIZE / 2;
-
-                      return (
-                        <div
-                          className={styles.magnifier}
-                          style={{ left: clampedLeft, top: clampedTop, width: MAG_SIZE, height: MAG_SIZE }}
-                        >
-                          <img
-                            src={pages[editingIndex].original}
-                            style={{
-                              width:  `${MAG_ZOOM * 100}%`,
-                              height: 'auto',
-                              position: 'absolute',
-                              left:  imgOffX,
-                              top:   imgOffY,
-                              maxWidth: 'none',
-                              pointerEvents: 'none',
-                            }}
-                            alt="zoom"
-                            draggable={false}
-                          />
-                        </div>
-                      );
-                    })()}
+                    {renderMagnifier()}
                   </div>
 
                 ) : editTab === 'transform' ? (
-                  <Cropper
-                    image={pages[editingIndex].original}
-                    crop={crop}
-                    zoom={zoom}
-                    rotation={editRotate}
-                    aspect={aspect}
-                    onCropChange={setCrop}
-                    onZoomChange={setZoom}
-                    onCropComplete={(_, px) => setCroppedAreaPixels(px)}
-                    objectFit="contain"
-                  />
+                  <Cropper image={pages[editingIndex].original} crop={crop} zoom={zoom}
+                    rotation={editRotate} aspect={aspect}
+                    onCropChange={setCrop} onZoomChange={setZoom}
+                    onCropComplete={(_, px) => setCroppedAreaPixels(px)} objectFit="contain" />
                 ) : (
-                  <img
-                    src={pages[editingIndex].original}
-                    className={styles.editImgPreview}
+                  <img src={pages[editingIndex].original} className={styles.editImgPreview}
                     style={{ filter: FILTERS.find(f => f.id === editFilter)?.css || '', transform: `rotate(${editRotate}deg)` }}
-                    alt="Preview"
-                  />
+                    alt="Preview" />
                 )}
               </div>
 
               <div className={styles.editToolsPanel}>
-
+                {/* Tabs */}
                 <div className={styles.toolTabs}>
                   {([
-                    { id: 'warp',      icon: <Grid3x3 size={14} />,  label: 'Warp' },
-                    { id: 'filters',   icon: <Sliders size={14} />,  label: 'Filters' },
-                    { id: 'transform', icon: <Crop size={14} />,     label: 'Crop' },
+                    { id: 'warp',      icon: <Grid3x3 size={14} />, label: 'Warp' },
+                    { id: 'filters',   icon: <Sliders size={14} />, label: 'Filters' },
+                    { id: 'transform', icon: <Crop size={14} />,    label: 'Crop' },
                   ] as const).map(tab => (
-                    <button
-                      key={tab.id}
+                    <button key={tab.id}
                       className={`${styles.toolTab} ${editTab === tab.id ? styles.active : ''}`}
-                      onClick={() => setEditTab(tab.id)}
-                    >
+                      onClick={() => setEditTab(tab.id)}>
                       {tab.icon} {tab.label}
                     </button>
                   ))}
@@ -630,16 +740,13 @@ export default function AIScannerClient() {
                   <div className={styles.warpInstructions}>
                     <div className={styles.warpInstructionItem}>
                       <span className={styles.warpBadge}><Move size={13}/></span>
-                      <span>Drag the <strong>4 corner handles</strong> to match the document edges.</span>
+                      <span>Drag the <strong>4 corner handles</strong> onto the document's corners.</span>
                     </div>
                     <div className={styles.warpInstructionItem}>
                       <span className={styles.warpBadge}><ZoomIn size={13}/></span>
-                      <span>A magnifier appears while dragging for precise placement.</span>
+                      <span>Magnifier shows the exact pixel while dragging.</span>
                     </div>
-                    <button
-                      className={styles.resetPointsBtn}
-                      onClick={() => setPoints(DEFAULT_POINTS)}
-                    >
+                    <button className={styles.resetPointsBtn} onClick={() => setPoints(DEFAULT_POINTS)}>
                       <RotateCcw size={13} /> Reset corners
                     </button>
                   </div>
@@ -650,13 +757,10 @@ export default function AIScannerClient() {
                     <p className={styles.sectionLabel}>Color Enhancement</p>
                     <div className={styles.filterGrid}>
                       {FILTERS.map(f => (
-                        <button
-                          key={f.id}
+                        <button key={f.id}
                           className={`${styles.filterBtn} ${editFilter === f.id ? styles.active : ''}`}
-                          onClick={() => setEditFilter(f.id)}
-                        >
-                          <span className={styles.filterIcon}>{f.icon}</span>
-                          {f.label}
+                          onClick={() => setEditFilter(f.id)}>
+                          <span className={styles.filterIcon}>{f.icon}</span>{f.label}
                         </button>
                       ))}
                     </div>
@@ -667,10 +771,7 @@ export default function AIScannerClient() {
                   <div className={styles.transformPanel}>
                     <div>
                       <p className={styles.sectionLabel}>Rotate</p>
-                      <button
-                        className={styles.toolActionBtn}
-                        onClick={() => setEditRotate(r => (r + 90) % 360)}
-                      >
+                      <button className={styles.toolActionBtn} onClick={() => setEditRotate(r => (r + 90) % 360)}>
                         <RotateCcw size={15} /> Rotate 90°
                       </button>
                     </div>
@@ -678,10 +779,10 @@ export default function AIScannerClient() {
                       <p className={styles.sectionLabel}>Aspect Ratio</p>
                       <div className={styles.aspectGrid}>
                         {[
-                          { label: 'Free',   value: undefined,   preview: { w: 24, h: 18 } },
-                          { label: 'Square', value: 1,           preview: { w: 18, h: 18 } },
-                          { label: '3:4',    value: 3/4,         preview: { w: 14, h: 18 } },
-                          { label: 'Auto',   value: -1 as any,   preview: { w: 22, h: 16 } },
+                          { label: 'Free',   value: undefined, preview: { w: 24, h: 18 } },
+                          { label: 'Square', value: 1,         preview: { w: 18, h: 18 } },
+                          { label: '3:4',    value: 3/4,       preview: { w: 14, h: 18 } },
+                          { label: 'Auto',   value: -1 as any, preview: { w: 22, h: 16 } },
                         ].map(a => (
                           <button key={a.label}
                             className={`${styles.aspectBtn} ${aspect === a.value ? styles.active : ''}`}
@@ -699,7 +800,7 @@ export default function AIScannerClient() {
                     </div>
                     <div className={styles.cropTip}>
                       <ZoomIn size={14} style={{ flexShrink: 0, marginTop: 1 }} />
-                      Pinch to zoom · Drag to reposition the crop selection
+                      Pinch to zoom · Drag to reposition
                     </div>
                   </div>
                 )}
